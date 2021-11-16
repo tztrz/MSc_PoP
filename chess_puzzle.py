@@ -12,8 +12,12 @@ def location2index(loc: str) -> tuple[int, int]:
 
 def index2location(x: int, y: int) -> str:
     '''converts  pair of coordinates to corresponding location'''
-    location = (char(x,y))
-    return str(location)
+    offset = ord("a") - 1
+    X = str(chr(x + offset))
+    Y = str(y)
+    letters = [X,Y]
+    return ("".join(letters))
+
 
 class Piece:
     pos_x : int	
