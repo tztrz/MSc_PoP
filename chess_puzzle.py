@@ -1,8 +1,15 @@
 def location2index(loc: str) -> tuple[int, int]:
     '''converts chess location to corresponding x and y coordinates'''
-    location = [loc.split()]
-    
-	
+    location = []
+    for x in loc:
+        if x.isnumeric() == False:
+            x = ord(x)-96
+        else:
+            x = int(x)
+        location.append(x)
+    return tuple(location)
+
+
 def index2location(x: int, y: int) -> str:
     '''converts  pair of coordinates to corresponding location'''
     location = (char(x,y))
@@ -14,14 +21,18 @@ class Piece:
     side : bool #True for White and False for Black
     def __init__(self, pos_X : int, pos_Y : int, side_ : bool):
         '''sets initial values'''
+        self.pos_X = pos_X
+        self.pos_Y = pos_Y
+        self.side_ = side_
 
 
 Board = tuple[int, list[Piece]]
 
 
 def is_piece_at(pos_X : int, pos_Y : int, B: Board) -> bool:
-    '''checks if there is piece at coordinates pox_X, pos_Y of board B''' 
-	
+    '''checks if there is piece at coordinates pox_X, pos_Y of board B'''
+
+
 def piece_at(pos_X : int, pos_Y : int, B: Board) -> Piece:
     '''
     returns the piece at coordinates pox_X, pos_Y of board B 
