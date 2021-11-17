@@ -29,7 +29,6 @@ class Piece:
         self.pos_Y = pos_Y
         self.side_ = side_
 
-
 Board = tuple[int, list[Piece]]
 
 

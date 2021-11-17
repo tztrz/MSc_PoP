@@ -2,11 +2,17 @@ import pytest
 from chess_puzzle import *
 
 
-def test_locatio2index1():
+def test_location2index1():
     assert location2index("e2") == (5,2)
+
+def test_location2index2():
+    assert location2index("e12") == (5,12)
 
 def test_index2location1():
     assert index2location(5,2) == "e2"
+
+def test_index2location2():
+    assert index2location(12,3) =="l3"
 
 wb1 = Bishop(1,1,True)
 wr1 = Rook(1,2,True)
