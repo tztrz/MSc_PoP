@@ -8,11 +8,17 @@ def test_location2index1():
 def test_location2index2():
     assert location2index("e12") == (5,12)
 
+def test_location2index3():
+    assert location2index("z26") == (26,26)
+
 def test_index2location1():
     assert index2location(5,2) == "e2"
 
 def test_index2location2():
     assert index2location(12,3) =="l3"
+
+def test_index2location3():
+    assert index2location(15,7) == "o7"
 
 wb1 = Bishop(1,1,True)
 wr1 = Rook(1,2,True)
@@ -35,6 +41,9 @@ B1 = (5, [wb1, wr1, wb2, bk, br1, br2, br3, wr2, wk])
 
 def test_is_piece_at1():
     assert is_piece_at(2,2, B1) == False
+
+def test_is_piece_at2():
+    assert is_piece_at(2,3,B1) == True
 
 def test_piece_at1():
     assert piece_at(4,3, B1) == br1

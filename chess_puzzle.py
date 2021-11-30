@@ -1,12 +1,19 @@
+import copy
+
+
 def location2index(loc: str) -> tuple[int, int]:
     '''converts chess location to corresponding x and y coordinates'''
     location = []
+    newloc = []
     for x in loc:
         if x.isnumeric() == False:
             x = ord(x)-96
+            location.append(x)
         else:
-            x = int(x)
-        location.append(x)
+            int(x)
+            newloc.append(x)
+    newloc = int(str("".join(newloc)))
+    location.append(newloc)
     return tuple(location)
 
 
@@ -34,6 +41,12 @@ Board = tuple[int, list[Piece]]
 
 def is_piece_at(pos_X : int, pos_Y : int, B: Board) -> bool:
     '''checks if there is piece at coordinates pox_X, pos_Y of board B'''
+    for i in B[1]:
+        x = i.pos_X
+        y = i.pos_Y
+        if x != pos_X or y != pos_Y:
+            pass
+
 
 
 def piece_at(pos_X : int, pos_Y : int, B: Board) -> Piece:
@@ -45,7 +58,10 @@ def piece_at(pos_X : int, pos_Y : int, B: Board) -> Piece:
 class Rook(Piece):
     def __init__(self, pos_X : int, pos_Y : int, side_ : bool):
         '''sets initial values by calling the constructor of Piece'''
-	
+        self.pos_X = pos_X
+        self.pos_Y = pos_Y
+        self.side_ = side_
+
     def can_reach(self, pos_X : int, pos_Y : int, B: Board) -> bool:
         '''
         checks if this rook can move to coordinates pos_X, pos_Y
@@ -73,6 +89,10 @@ class Rook(Piece):
 class Bishop(Piece):
     def __init__(self, pos_X : int, pos_Y : int, side_ : bool):
         '''sets initial values by calling the constructor of Piece'''
+        self.pos_X = pos_X
+        self.pos_Y = pos_Y
+        self.side_ = side_
+
     def can_reach(self, pos_X : int, pos_Y : int, B: Board) -> bool:
         '''checks if this bishop can move to coordinates pos_X, pos_Y on board B according to rule [Rule1] and [Rule4]'''
     def can_move_to(self, pos_X : int, pos_Y : int, B: Board) -> bool:
@@ -87,6 +107,10 @@ class Bishop(Piece):
 class King(Piece):
     def __init__(self, pos_X : int, pos_Y : int, side_ : bool):
         '''sets initial values by calling the constructor of Piece'''
+        self.pos_X = pos_X
+        self.pos_Y = pos_Y
+        self.side_ = side_
+
     def can_reach(self, pos_X : int, pos_Y : int, B: Board) -> bool:
         '''checks if this king can move to coordinates pos_X, pos_Y on board B according to rule [Rule3] and [Rule4]'''
     def can_move_to(self, pos_X : int, pos_Y : int, B: Board) -> bool:
