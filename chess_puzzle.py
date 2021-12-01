@@ -59,6 +59,13 @@ def piece_at(pos_X : int, pos_Y : int, B: Board) -> Piece:
     returns the piece at coordinates pox_X, pos_Y of board B 
     assumes some piece at coordinates pox_X, pos_Y of board B is present
     '''
+    for i in B[1]:
+        x = i.pos_X
+        y = i.pos_Y
+        if x == pos_X and y == pos_Y:
+            return i
+        else:
+            pass
 
 class Rook(Piece):
     def __init__(self, pos_X : int, pos_Y : int, side_ : bool):

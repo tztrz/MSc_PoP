@@ -45,8 +45,20 @@ def test_is_piece_at1():
 def test_is_piece_at2():
     assert is_piece_at(2,3,B1) == True
 
+def test_is_piece_at3():
+    assert is_piece_at(5,3, B1) == False
+
 def test_piece_at1():
     assert piece_at(4,3, B1) == br1
+
+def test_piece_at2():
+    assert piece_at(1,5, B1) ==  wr2
+
+def test_piece_at3():
+    assert piece_at(5,4, B1) == br3
+
+def test_piece_at4():
+    assert piece_at(3,5, B1) == wk
 
 def test_can_reach1():
     assert wr2.can_reach(4,5, B1) == False
