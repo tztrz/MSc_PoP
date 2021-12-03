@@ -76,18 +76,12 @@ class Rook(Piece):
         on board B according to rule [Rule2] and [Rule4](see section Intro)
         Hint: use is_piece_at
         '''
-        for i in B[1]:
-            if i.pos_X == pos_X or i.pos_Y == pos_Y and  abs(i.pos_X) > abs(pos_X) or abs(i.pos_Y) < abs(pos_Y):
+        if self.pos_X == pos_X or self.pos_Y == pos_Y:
+            pce = piece_at(pos_X, pos_Y, B)
+            if is_piece_at(pos_X, pos_Y, B) == True and pce.side_ == self.side_:
                 return False
-                break
             else:
-                if is_piece_at(pos_X, pos_Y, B) == True and piece_at(pos_X,pos_Y,B).side_ == self.side_:
-                    return False
-                    break
-                elif pos_X == self.pos_X or pos_Y == self.pos_Y:
-                    return True
-                else:
-                    return False
+                return True
 
     def can_move_to(self, pos_X : int, pos_Y : int, B: Board) -> bool:
         '''
