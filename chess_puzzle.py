@@ -27,9 +27,9 @@ def index2location(x: int, y: int) -> str:
 
 
 class Piece:
-    pos_x : int	
-    pos_y : int
-    side : bool #True for White and False for Black
+    pos_X : int
+    pos_Y : int
+    side_ : bool #True for White and False for Black
     def __init__(self, pos_X : int, pos_Y : int, side_ : bool):
         '''sets initial values'''
         self.pos_X = pos_X
@@ -43,9 +43,7 @@ def is_piece_at(pos_X : int, pos_Y : int, B: Board) -> bool:
     '''checks if there is piece at coordinates pox_X, pos_Y of board B'''
     true_is_piece_at = 0
     for i in B[1]:
-        x = i.pos_X
-        y = i.pos_Y
-        if x == pos_X and y == pos_Y:
+        if i.pos_X == pos_X and i.pos_Y == pos_Y:
             true_is_piece_at += 1
         else:
             pass
@@ -60,9 +58,7 @@ def piece_at(pos_X : int, pos_Y : int, B: Board) -> Piece:
     assumes some piece at coordinates pox_X, pos_Y of board B is present
     '''
     for i in B[1]:
-        x = i.pos_X
-        y = i.pos_Y
-        if x == pos_X and y == pos_Y:
+        if i.pos_X == pos_X and i.pos_Y == pos_Y:
             return i
         else:
             pass
@@ -80,6 +76,19 @@ class Rook(Piece):
         on board B according to rule [Rule2] and [Rule4](see section Intro)
         Hint: use is_piece_at
         '''
+        for i in B[1]:
+            if i.pos_X == pos_X or i.pos_Y == pos_Y and  abs(i.pos_X) > abs(pos_X) or abs(i.pos_Y) < abs(pos_Y):
+                return False
+                break
+            else:
+                if is_piece_at(pos_X, pos_Y, B) == True and piece_at(pos_X,pos_Y,B).side_ == self.side_:
+                    return False
+                    break
+                elif pos_X == self.pos_X or pos_Y == self.pos_Y:
+                    return True
+                else:
+                    return False
+
     def can_move_to(self, pos_X : int, pos_Y : int, B: Board) -> bool:
         '''
         checks if this rook can move to coordinates pos_X, pos_Y
@@ -92,6 +101,7 @@ class Rook(Piece):
         - thirdly, construct new board resulting from move
         - finally, to check [Rule5], use is_check on new board
         '''
+
     def move_to(self, pos_X : int, pos_Y : int, B: Board) -> Board:
         '''
         returns new board resulting from move of this rook to coordinates pos_X, pos_Y on board B 

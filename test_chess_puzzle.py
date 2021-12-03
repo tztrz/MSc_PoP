@@ -63,6 +63,13 @@ def test_piece_at4():
 def test_can_reach1():
     assert wr2.can_reach(4,5, B1) == False
 
+def test_can_reach2():
+    assert wr2.can_reach(1,2,B1) == False
+
+def test_can_reach3():
+    assert br1.can_reach(4,5,B1) == True
+
+
 br2a = Rook(1,5,False)
 wr2a = Rook(2,5,True)
 
@@ -100,4 +107,4 @@ def test_read_board1():
 
 def test_conf2unicode1():
     assert conf2unicode(B1) == "♖ ♔  \n ♜  ♜\n ♚ ♜ \n♖   ♗\n♗    "
-    
+
