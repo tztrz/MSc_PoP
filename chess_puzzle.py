@@ -142,7 +142,7 @@ class Bishop(Piece):
             return False
         else:
             path_clear = True
-            for i in range(1,pos_X):
+            for i in range(1,x):
                 if is_piece_at(self.pos_X+i,self.pos_Y+i,B):
                     path_clear = False
                     break
