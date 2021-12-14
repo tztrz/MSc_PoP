@@ -80,11 +80,13 @@ class Rook(Piece):
         if is_piece_at(pos_X, pos_Y, B) == True and piece_at(pos_X, pos_Y, B).side_ == self.side_:
             return False
         else:
-            x = 0
-            for x, y in zip(range(self.pos_X + 1, pos_X), range(self.pos_Y + 1, pos_Y)):
-                if is_piece_at(x, y, B):
-                    x += 1
-            if pos_X == self.pos_X or pos_Y == self.pos_Y and x == 0:
+            x = bool
+            for i, j in zip(range(self.pos_X, pos_X-1), range(self.pos_Y, pos_Y-1)):
+                if is_piece_at(i, j, B):
+                    x = True
+                else:
+                    x = False
+            if pos_X == self.pos_X or pos_Y == self.pos_Y and x == False:
                 return True
             else:
                 return False
