@@ -3,7 +3,7 @@ def location2index(loc: str) -> tuple[int, int]:
     location = []
     newloc = []
     for x in loc:
-        if x.isnumeric() == False:
+        if not x.isnumeric():
             x = ord(x) - 96
             location.append(x)
         else:
@@ -20,7 +20,7 @@ def index2location(x: int, y: int) -> str:
     X = str(chr(x + offset))
     Y = str(y)
     letters = [X, Y]
-    return ("".join(letters))
+    return "".join(letters)
 
 
 class Piece:
@@ -80,16 +80,19 @@ class Rook(Piece):
         if is_piece_at(pos_X, pos_Y, B) == True and piece_at(pos_X, pos_Y, B).side_ == self.side_:
             return False
         else:
-            x = bool
-            for i, j in zip(range(self.pos_X, pos_X-1), range(self.pos_Y, pos_Y-1)):
-                if is_piece_at(i, j, B):
-                    x = True
-                else:
-                    x = False
-            if pos_X == self.pos_X or pos_Y == self.pos_Y and x == False:
+            path_clear = 0
+            for i in range(self.pos_X, pos_X,1):
+                for j in range(self.pos_Y,pos_Y,1):
+                    if is_piece_at(i, j, B):
+                        path_clear = False
+                    else:
+                        path_clear = True
+            if (pos_X == self.pos_X or pos_Y == self.pos_Y) and path_clear:
                 return True
             else:
                 return False
+
+            #  Not traversing y axis? Look at test_can_reach5() returning true even though false?
 
     def can_move_to(self, pos_X: int, pos_Y: int, B: Board) -> bool:
         '''
@@ -191,7 +194,7 @@ def find_black_move(B: Board) -> tuple[Piece, int, int]:
 
 
 def conf2unicode(B: Board) -> str:
-    '''converts board cofiguration B to unicode format string (see section Unicode board configurations)'''
+    '''converts board configuration B to unicode format string (see section Unicode board configurations)'''
 
 
 def main() -> None:
