@@ -78,6 +78,9 @@ def test_can_reach5():
 def test_can_reach6():
     assert br1.can_reach(1,3,B1) == False
 
+def test_can_reach7():
+    assert wr1.can_reach(3,2, B1) == True
+
 br2a = Rook(1,5,False)
 wr2a = Rook(2,5,True)
 

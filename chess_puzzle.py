@@ -80,19 +80,35 @@ class Rook(Piece):
         if is_piece_at(pos_X, pos_Y, B) == True and piece_at(pos_X, pos_Y, B).side_ == self.side_:
             return False
         else:
-            path_clear = 0
-            for i in range(self.pos_X, pos_X,1):
-                for j in range(self.pos_Y,pos_Y,1):
-                    if is_piece_at(i, j, B):
-                        path_clear = False
-                    else:
-                        path_clear = True
-            if (pos_X == self.pos_X or pos_Y == self.pos_Y) and path_clear:
-                return True
-            else:
-                return False
+            if pos_X == self.pos_X or pos_Y == self.pos_Y:
+                path_clear = True
+                if pos_X == self.pos_X:
+                    for y in range(self.pos_Y+1,pos_Y):
+                        if is_piece_at(self.pos_X,y,B):
+                            path_clear = False
+                            break
+                    for y in range(self.pos_Y+1,pos_Y,-1):
+                        if is_piece_at(self.pos_X,y,B):
+                            path_clear = False
+                            break
+                else:
+                    for x in range(self.pos_X+1,pos_X):
+                        if is_piece_at(x,self.pos_Y,B):
+                            path_clear = False
+                            break
+                    for x in range(self.pos_X+1,pos_X,-1):
+                        if is_piece_at(x,self.pos_Y,B):
+                            path_clear = False
+                            break
 
-            #  Not traversing y axis? Look at test_can_reach5() returning true even though false?
+                if path_clear:
+                    return True
+                else:
+                    return False
+
+
+
+
 
     def can_move_to(self, pos_X: int, pos_Y: int, B: Board) -> bool:
         '''
