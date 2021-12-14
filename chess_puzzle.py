@@ -1,13 +1,10 @@
-import copy
-
-
 def location2index(loc: str) -> tuple[int, int]:
     '''converts chess location to corresponding x and y coordinates'''
     location = []
     newloc = []
     for x in loc:
         if x.isnumeric() == False:
-            x = ord(x)-96
+            x = ord(x) - 96
             location.append(x)
         else:
             int(x)
@@ -22,24 +19,26 @@ def index2location(x: int, y: int) -> str:
     offset = ord("a") - 1
     X = str(chr(x + offset))
     Y = str(y)
-    letters = [X,Y]
+    letters = [X, Y]
     return ("".join(letters))
 
 
 class Piece:
-    pos_X : int
-    pos_Y : int
-    side_ : bool #True for White and False for Black
-    def __init__(self, pos_X : int, pos_Y : int, side_ : bool):
+    pos_X: int
+    pos_Y: int
+    side_: bool  # True for White and False for Black)
+
+    def __init__(self, pos_X: int, pos_Y: int, side_: bool):
         '''sets initial values'''
         self.pos_X = pos_X
         self.pos_Y = pos_Y
         self.side_ = side_
 
+
 Board = tuple[int, list[Piece]]
 
 
-def is_piece_at(pos_X : int, pos_Y : int, B: Board) -> bool:
+def is_piece_at(pos_X: int, pos_Y: int, B: Board) -> bool:
     '''checks if there is piece at coordinates pox_X, pos_Y of board B'''
     true_is_piece_at = 0
     for i in B[1]:
@@ -52,7 +51,8 @@ def is_piece_at(pos_X : int, pos_Y : int, B: Board) -> bool:
     else:
         return False
 
-def piece_at(pos_X : int, pos_Y : int, B: Board) -> Piece:
+
+def piece_at(pos_X: int, pos_Y: int, B: Board) -> Piece:
     '''
     returns the piece at coordinates pox_X, pos_Y of board B 
     assumes some piece at coordinates pox_X, pos_Y of board B is present
@@ -63,27 +63,33 @@ def piece_at(pos_X : int, pos_Y : int, B: Board) -> Piece:
         else:
             pass
 
+
 class Rook(Piece):
-    def __init__(self, pos_X : int, pos_Y : int, side_ : bool):
+    def __init__(self, pos_X: int, pos_Y: int, side_: bool):
         '''sets initial values by calling the constructor of Piece'''
         self.pos_X = pos_X
         self.pos_Y = pos_Y
         self.side_ = side_
 
-    def can_reach(self, pos_X : int, pos_Y : int, B: Board) -> bool:
+    def can_reach(self, pos_X: int, pos_Y: int, B: Board) -> bool:
         '''
         checks if this rook can move to coordinates pos_X, pos_Y
         on board B according to rule [Rule2] and [Rule4](see section Intro)
         Hint: use is_piece_at
         '''
-        if self.pos_X == pos_X or self.pos_Y == pos_Y:
-            pce = piece_at(pos_X, pos_Y, B)
-            if is_piece_at(pos_X, pos_Y, B) == True and pce.side_ == self.side_:
-                return False
-            else:
+        if is_piece_at(pos_X, pos_Y, B) == True and piece_at(pos_X, pos_Y, B).side_ == self.side_:
+            return False
+        else:
+            x = 0
+            for x, y in zip(range(self.pos_X + 1, pos_X), range(self.pos_Y + 1, pos_Y)):
+                if is_piece_at(x, y, B):
+                    x += 1
+            if pos_X == self.pos_X or pos_Y == self.pos_Y and x == 0:
                 return True
+            else:
+                return False
 
-    def can_move_to(self, pos_X : int, pos_Y : int, B: Board) -> bool:
+    def can_move_to(self, pos_X: int, pos_Y: int, B: Board) -> bool:
         '''
         checks if this rook can move to coordinates pos_X, pos_Y
         on board B according to all chess rules
@@ -96,24 +102,27 @@ class Rook(Piece):
         - finally, to check [Rule5], use is_check on new board
         '''
 
-    def move_to(self, pos_X : int, pos_Y : int, B: Board) -> Board:
+    def move_to(self, pos_X: int, pos_Y: int, B: Board) -> Board:
         '''
         returns new board resulting from move of this rook to coordinates pos_X, pos_Y on board B 
         assumes this move is valid according to chess rules
         '''
 
+
 class Bishop(Piece):
-    def __init__(self, pos_X : int, pos_Y : int, side_ : bool):
+    def __init__(self, pos_X: int, pos_Y: int, side_: bool):
         '''sets initial values by calling the constructor of Piece'''
         self.pos_X = pos_X
         self.pos_Y = pos_Y
         self.side_ = side_
 
-    def can_reach(self, pos_X : int, pos_Y : int, B: Board) -> bool:
+    def can_reach(self, pos_X: int, pos_Y: int, B: Board) -> bool:
         '''checks if this bishop can move to coordinates pos_X, pos_Y on board B according to rule [Rule1] and [Rule4]'''
-    def can_move_to(self, pos_X : int, pos_Y : int, B: Board) -> bool:
+
+    def can_move_to(self, pos_X: int, pos_Y: int, B: Board) -> bool:
         '''checks if this bishop can move to coordinates pos_X, pos_Y on board B according to all chess rules'''
-    def move_to(self, pos_X : int, pos_Y : int, B: Board) -> Board:
+
+    def move_to(self, pos_X: int, pos_Y: int, B: Board) -> Board:
         '''
         returns new board resulting from move of this bishop to coordinates pos_X, pos_Y on board B 
         assumes this move is valid according to chess rules
@@ -121,27 +130,31 @@ class Bishop(Piece):
 
 
 class King(Piece):
-    def __init__(self, pos_X : int, pos_Y : int, side_ : bool):
+    def __init__(self, pos_X: int, pos_Y: int, side_: bool):
         '''sets initial values by calling the constructor of Piece'''
         self.pos_X = pos_X
         self.pos_Y = pos_Y
         self.side_ = side_
 
-    def can_reach(self, pos_X : int, pos_Y : int, B: Board) -> bool:
+    def can_reach(self, pos_X: int, pos_Y: int, B: Board) -> bool:
         '''checks if this king can move to coordinates pos_X, pos_Y on board B according to rule [Rule3] and [Rule4]'''
-    def can_move_to(self, pos_X : int, pos_Y : int, B: Board) -> bool:
+
+    def can_move_to(self, pos_X: int, pos_Y: int, B: Board) -> bool:
         '''checks if this king can move to coordinates pos_X, pos_Y on board B according to all chess rules'''
-    def move_to(self, pos_X : int, pos_Y : int, B: Board) -> Board:
+
+    def move_to(self, pos_X: int, pos_Y: int, B: Board) -> Board:
         '''
         returns new board resulting from move of this king to coordinates pos_X, pos_Y on board B 
         assumes this move is valid according to chess rules
         '''
+
 
 def is_check(side: bool, B: Board) -> bool:
     '''
     checks if configuration of B is check for side
     Hint: use can_reach
     '''
+
 
 def is_checkmate(side: bool, B: Board) -> bool:
     '''
@@ -152,11 +165,13 @@ def is_checkmate(side: bool, B: Board) -> bool:
     - use can_reach 
     '''
 
+
 def read_board(filename: str) -> Board:
     '''
     reads board configuration from file in current directory in plain format
     raises IOError exception if file is not valid (see section Plain board configurations)
     '''
+
 
 def save_board(filename: str) -> None:
     '''saves board configuration into file in current directory in plain format'''
@@ -172,7 +187,8 @@ def find_black_move(B: Board) -> tuple[Piece, int, int]:
     - use can_move_to
     '''
 
-def conf2unicode(B: Board) -> str: 
+
+def conf2unicode(B: Board) -> str:
     '''converts board cofiguration B to unicode format string (see section Unicode board configurations)'''
 
 
@@ -183,7 +199,8 @@ def main() -> None:
     Hint: implementation of this could start as follows:
     filename = input("File name for initial configuration: ")
     ...
-    '''    
+    '''
 
-if __name__ == '__main__': #keep this in
-   main()
+
+if __name__ == '__main__':  # keep this in
+    main()
