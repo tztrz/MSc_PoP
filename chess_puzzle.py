@@ -185,9 +185,10 @@ class King(Piece):
         '''checks if this king can move to coordinates pos_X, pos_Y on board B according to rule [Rule3] and [Rule4]'''
         if is_piece_at(pos_X, pos_Y, B) == True and piece_at(pos_X, pos_Y, B).side_ == self.side_:
             return False
-        elif (self.pos_X == pos_X + 1 or self.pos_X == pos_X - 1 or self.pos_X == self.pos_X) \
-                and (self.pos_Y == self.pos_Y + 1 or self.pos_Y == self.pos_Y - 1 or self.pos_Y == self.pos_Y):
+        elif (pos_X == self.pos_X+1 or pos_X == self.pos_X-1 or pos_X == self.pos_X) and (pos_Y == self.pos_Y + 1 or pos_Y == self.pos_Y - 1 or pos_Y == self.pos_Y)
             return True
+        else:
+            return False
 
     def can_move_to(self, pos_X: int, pos_Y: int, B: Board) -> bool:
         '''checks if this king can move to coordinates pos_X, pos_Y on board B according to all chess rules'''
@@ -211,13 +212,13 @@ def is_check(side: bool, B: Board) -> bool:
         if side == i.side_ and type(i) == '__main__.King':
             king_x = i.pos_X
             king_y = i.pos_Y
-        if side != i.side_ and i.can_reach(king_x, king_y, B) == True:
+    for j in B[1]:
+        if j.side_ != side and j.can_reach(king_x, king_y, B):
             check = True
             break
         else:
-            check = False
+            check = j
     return check
-
 
 def is_checkmate(side: bool, B: Board) -> bool:
     '''
