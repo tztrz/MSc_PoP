@@ -99,6 +99,11 @@ def test_can_reach12():
 def test_can_reach13():
     assert bk.can_reach(2,4,B1) == False
 
+def test_can_reach14():
+    wr2b = Rook(2, 5, True)
+    B2 = (5, [wb1, wr1, wb2, bk, br1, br2, br3, wr2b, wk])
+    assert wr2b.can_reach(2,3,B2) == False
+
 br2a = Rook(1,5,False)
 wr2a = Rook(2,5,True)
 
@@ -110,6 +115,36 @@ def test_is_check1():
     wr2b = Rook(2,4,True)
     B2 = (5, [wb1, wr1, wb2, bk, br1, br2a, br3, wr2b, wk])
     assert is_check(True, B2) == True
+
+def test_is_check2():
+    wb2a = Bishop(4, 1, True)
+    wr2b = Rook(4, 4, True)
+    B2 = (5, [wb1, wr1, wb2a, bk, br1, br2a, br3, wr2b, wk])
+    assert is_check(True, B2) == True
+
+def test_is_check3():
+    br1 = Rook(4,5,False)
+    wr2b = Rook(4, 4, True)
+    B2 = (5, [wb1, wr1, wb2, bk, br1, br2a, br3, wr2b, wk])
+    assert is_check(True,B2) == True
+
+def test_is_check4():
+    br3 = Rook(5,5, False)
+    wr2b = Rook(4, 4, True)
+    wr1 = Rook(2,2, True)
+    B2 = (5, [wb1, wr1, wb2, bk, br1, br2a, br3, wr2b, wk])
+    assert is_check(False, B2) == True
+
+def test_is_check5():
+    wr2b = Rook(2,5,True)
+    B2 = (5, [wb1, wr1, wb2, bk, br1, br2, br3, wr2b, wk])
+    assert is_check(False, B2) == False
+
+def test_is_check6():
+    br2a = Rook(2,4,False)
+    wr2b = Rook(2, 5, True)
+    B2 = (5, [wb1, wr1, wb2, bk, br1, br2a, br3, wr2b, wk])
+    assert  is_check(True ,B2) == False
 
 def test_is_checkmate1():
     br2b = Rook(4,5,False)

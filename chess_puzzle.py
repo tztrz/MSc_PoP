@@ -34,6 +34,9 @@ class Piece:
         self.pos_Y = pos_Y
         self.side_ = side_
 
+    def can_reach(self, pos_X, pos_Y, B):
+        pass
+
 
 Board = tuple[int, list[Piece]]
 
@@ -83,21 +86,21 @@ class Rook(Piece):
             if pos_X == self.pos_X or pos_Y == self.pos_Y:
                 path_clear = True
                 if pos_X == self.pos_X:
-                    for y in range(self.pos_Y+1,pos_Y):
-                        if is_piece_at(self.pos_X,y,B):
+                    for y in range(self.pos_Y + 1, pos_Y):
+                        if is_piece_at(self.pos_X, y, B):
                             path_clear = False
                             break
-                    for y in range(self.pos_Y+1,pos_Y,-1):
-                        if is_piece_at(self.pos_X,y,B):
+                    for y in range(self.pos_Y + 1, pos_Y, -1):
+                        if is_piece_at(self.pos_X, y, B):
                             path_clear = False
                             break
                 else:
-                    for x in range(self.pos_X+1,pos_X):
-                        if is_piece_at(x,self.pos_Y,B):
+                    for x in range(self.pos_X + 1, pos_X):
+                        if is_piece_at(x, self.pos_Y, B):
                             path_clear = False
                             break
-                    for x in range(self.pos_X+1,pos_X,-1):
-                        if is_piece_at(x,self.pos_Y,B):
+                    for x in range(self.pos_X + 1, pos_X, -1):
+                        if is_piece_at(x, self.pos_Y, B):
                             path_clear = False
                             break
 
@@ -119,7 +122,6 @@ class Rook(Piece):
         - finally, to check [Rule5], use is_check on new board
         '''
 
-
     def move_to(self, pos_X: int, pos_Y: int, B: Board) -> Board:
         '''
         returns new board resulting from move of this rook to coordinates pos_X, pos_Y on board B 
@@ -138,21 +140,21 @@ class Bishop(Piece):
         '''checks if this bishop can move to coordinates pos_X, pos_Y on board B according to rule [Rule1] and [Rule4]'''
         x = abs(self.pos_X - pos_X)
         y = abs(self.pos_Y - pos_Y)
-        if x != y and is_piece_at(pos_X, pos_Y, B) == True and piece_at(pos_X,pos_Y,B).side_ == self.side_:
+        if x != y and is_piece_at(pos_X, pos_Y, B) == True and piece_at(pos_X, pos_Y, B).side_ == self.side_:
             return False
         else:
             path_clear = True
-            for i in range(1,x):
-                if is_piece_at(self.pos_X+i,self.pos_Y+i,B):
+            for i in range(1, x):
+                if is_piece_at(self.pos_X + i, self.pos_Y + i, B):
                     path_clear = False
                     break
-                elif is_piece_at(self.pos_X-i,self.pos_Y-i,B):
+                elif is_piece_at(self.pos_X - i, self.pos_Y - i, B):
                     path_clear = False
                     break
-                elif is_piece_at(self.pos_X+i,self.pos_Y-i,B):
+                elif is_piece_at(self.pos_X + i, self.pos_Y - i, B):
                     path_clear = False
                     break
-                elif is_piece_at(self.pos_X-i,self.pos_Y+i,B):
+                elif is_piece_at(self.pos_X - i, self.pos_Y + i, B):
                     path_clear = False
                     break
                 else:
@@ -162,10 +164,8 @@ class Bishop(Piece):
             else:
                 return False
 
-
     def can_move_to(self, pos_X: int, pos_Y: int, B: Board) -> bool:
         '''checks if this bishop can move to coordinates pos_X, pos_Y on board B according to all chess rules'''
-
 
     def move_to(self, pos_X: int, pos_Y: int, B: Board) -> Board:
         '''
@@ -181,15 +181,13 @@ class King(Piece):
         self.pos_Y = pos_Y
         self.side_ = side_
 
-
     def can_reach(self, pos_X: int, pos_Y: int, B: Board) -> bool:
         '''checks if this king can move to coordinates pos_X, pos_Y on board B according to rule [Rule3] and [Rule4]'''
-        if is_piece_at(pos_X, pos_Y, B) == True and piece_at(pos_X,pos_Y,B).side_ == self.side_:
+        if is_piece_at(pos_X, pos_Y, B) == True and piece_at(pos_X, pos_Y, B).side_ == self.side_:
             return False
-        elif (self.pos_X == pos_X+1 or self.pos_X == pos_X-1 or self.pos_X == self.pos_X)\
-                and (self.pos_Y == self.pos_Y+1 or self.pos_Y == self.pos_Y-1 or self.pos_Y == self.pos_Y):
+        elif (self.pos_X == pos_X + 1 or self.pos_X == pos_X - 1 or self.pos_X == self.pos_X) \
+                and (self.pos_Y == self.pos_Y + 1 or self.pos_Y == self.pos_Y - 1 or self.pos_Y == self.pos_Y):
             return True
-
 
     def can_move_to(self, pos_X: int, pos_Y: int, B: Board) -> bool:
         '''checks if this king can move to coordinates pos_X, pos_Y on board B according to all chess rules'''
@@ -206,6 +204,19 @@ def is_check(side: bool, B: Board) -> bool:
     checks if configuration of B is check for side
     Hint: use can_reach
     '''
+    king_x = 0
+    king_y = 0
+    check = 0
+    for i in B[1]:
+        if side == i.side_ and type(i) == '__main__.King':
+            king_x = i.pos_X
+            king_y = i.pos_Y
+        if side != i.side_ and i.can_reach(king_x, king_y, B) == True:
+            check = True
+            break
+        else:
+            check = False
+    return check
 
 
 def is_checkmate(side: bool, B: Board) -> bool:
@@ -252,6 +263,7 @@ def main() -> None:
     filename = input("File name for initial configuration: ")
     ...
     '''
+    filename = input("File name for initial configuration:")
 
 
 if __name__ == '__main__':  # keep this in
