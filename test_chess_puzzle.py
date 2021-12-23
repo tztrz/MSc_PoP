@@ -137,7 +137,8 @@ def test_is_check4():
 
 def test_is_check5():
     wr2b = Rook(2,5,True)
-    wb2  = Bishop(5,3,True)
+    wb2  = Bishop(5,2,True)
+    wb1 = Bishop(1,1,True)
     bk = King(2, 3, False)
     B2 = (5, [wb1, wr1, wb2, bk, br1, br2, br3, wr2b, wk])
     assert is_check(False, B2) == False

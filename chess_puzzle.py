@@ -70,6 +70,7 @@ def piece_at(pos_X: int, pos_Y: int, B: Board) -> Piece:
 class Rook(Piece):
     def __init__(self, pos_X: int, pos_Y: int, side_: bool):
         '''sets initial values by calling the constructor of Piece'''
+        super().__init__(pos_X, pos_Y, side_)
         self.pos_X = pos_X
         self.pos_Y = pos_Y
         self.side_ = side_
@@ -132,6 +133,7 @@ class Rook(Piece):
 class Bishop(Piece):
     def __init__(self, pos_X: int, pos_Y: int, side_: bool):
         '''sets initial values by calling the constructor of Piece'''
+        super().__init__(pos_X, pos_Y, side_)
         self.pos_X = pos_X
         self.pos_Y = pos_Y
         self.side_ = side_
@@ -140,7 +142,7 @@ class Bishop(Piece):
         '''checks if this bishop can move to coordinates pos_X, pos_Y on board B according to rule [Rule1] and [Rule4]'''
         x = abs(self.pos_X - pos_X)
         y = abs(self.pos_Y - pos_Y)
-        if x != y and is_piece_at(pos_X, pos_Y, B) == True and piece_at(pos_X, pos_Y, B).side_ == self.side_:
+        if is_piece_at(pos_X, pos_Y, B) == True and piece_at(pos_X, pos_Y, B).side_ == self.side_:
             return False
         else:
             path_clear = True
@@ -159,7 +161,7 @@ class Bishop(Piece):
                     break
                 else:
                     pass
-            if path_clear:
+            if path_clear and x == y:
                 return True
             else:
                 return False
@@ -177,6 +179,7 @@ class Bishop(Piece):
 class King(Piece):
     def __init__(self, pos_X: int, pos_Y: int, side_: bool):
         '''sets initial values by calling the constructor of Piece'''
+        super().__init__(pos_X, pos_Y, side_)
         self.pos_X = pos_X
         self.pos_Y = pos_Y
         self.side_ = side_
@@ -185,7 +188,7 @@ class King(Piece):
         '''checks if this king can move to coordinates pos_X, pos_Y on board B according to rule [Rule3] and [Rule4]'''
         if is_piece_at(pos_X, pos_Y, B) == True and piece_at(pos_X, pos_Y, B).side_ == self.side_:
             return False
-        elif (pos_X == self.pos_X+1 or pos_X == self.pos_X-1 or pos_X == self.pos_X) and (pos_Y == self.pos_Y + 1 or pos_Y == self.pos_Y - 1 or pos_Y == self.pos_Y)
+        if abs(self.pos_X-pos_X) <2 and abs(self.pos_Y-pos_Y) <2:
             return True
         else:
             return False
@@ -207,17 +210,16 @@ def is_check(side: bool, B: Board) -> bool:
     '''
     king_x = 0
     king_y = 0
-    check = 0
-    for i in B[1]:
-        if side == i.side_ and type(i) == '__main__.King':
-            king_x = i.pos_X
-            king_y = i.pos_Y
     for j in B[1]:
-        if j.side_ != side and j.can_reach(king_x, king_y, B):
+        if side == j.side_ and type(j) == King:
+            king_x = j.pos_X
+            king_y = j.pos_Y
+    for k in B[1]:
+        if k.side_ != side and k.can_reach(king_x, king_y, B):
             check = True
             break
         else:
-            check = j
+            check = False
     return check
 
 def is_checkmate(side: bool, B: Board) -> bool:
