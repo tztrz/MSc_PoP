@@ -157,7 +157,7 @@ class Bishop(Piece):
                     break
                 else:
                     pass
-            if path_clear == True:
+            if path_clear:
                 return True
             else:
                 return False
@@ -181,8 +181,15 @@ class King(Piece):
         self.pos_Y = pos_Y
         self.side_ = side_
 
+
     def can_reach(self, pos_X: int, pos_Y: int, B: Board) -> bool:
         '''checks if this king can move to coordinates pos_X, pos_Y on board B according to rule [Rule3] and [Rule4]'''
+        if is_piece_at(pos_X, pos_Y, B) == True and piece_at(pos_X,pos_Y,B).side_ == self.side_:
+            return False
+        elif (self.pos_X == pos_X+1 or self.pos_X == pos_X-1 or self.pos_X == self.pos_X)\
+                and (self.pos_Y == self.pos_Y+1 or self.pos_Y == self.pos_Y-1 or self.pos_Y == self.pos_Y):
+            return True
+
 
     def can_move_to(self, pos_X: int, pos_Y: int, B: Board) -> bool:
         '''checks if this king can move to coordinates pos_X, pos_Y on board B according to all chess rules'''
