@@ -1,4 +1,3 @@
-import pytest
 from chess_puzzle import *
 
 
@@ -106,10 +105,34 @@ def test_can_reach14():
 
 br2a = Rook(1,5,False)
 wr2a = Rook(2,5,True)
+bb1 = Bishop(2,1,False)
 
 def test_can_move_to1():
     B2 = (5, [wb1, wr1, wb2, bk, br1, br2a, br3, wr2a, wk])
     assert wr2a.can_move_to(2,4, B2) == False
+
+def test_can_move_to2():
+    B2 = (5, [wb1, wr1, wb2, bk, br1, br2a, br3, wr2a, wk])
+    assert br2a.can_move_to(2, 4, B2) == False
+
+def test_can_move_to3():
+    B2 = (5, [wb1, wr1, wb2, bk, br1, br2a, br3, bb1, wk])
+    assert bb1.can_move_to(2, 4, B2) == False
+
+def test_can_move_to4():
+    wr1 = Rook(1,2,True)
+    B2 = (5, [wb1, wr1, wb2, bk, br1, br2a, br3, wr2a, wk])
+    assert bk.can_move_to(2, 2, B2) == False
+
+def test_can_move_to5():
+    wr2 = Rook(3,3,True)
+    br2a = Rook(1,3, False)
+    B2 = (5, [wb1, wr1, wb2, bk, br1, br2a, br3, wr2a, wr2, wk])
+    assert wr2.can_move_to(2,3,B2) == False
+
+def test_can_move_to6():
+    B2 = (5, [wb1, wr1, wb2, bk, br1, br2a, br3, wr2a, wk])
+    assert wb1.can_move_to(2,2,B2) == True
 
 def test_is_check1():
     wr2b = Rook(2,4,True)
@@ -144,10 +167,10 @@ def test_is_check5():
     assert is_check(False, B2) == False
 
 def test_is_check6():
-    br2a = Rook(2,4,False)
-    wr2b = Rook(2,5, True)
-    B2 = (5, [wb1, wr1, wb2, bk, br1, br2a, br3, wr2b, wk])
-    assert is_check(True,B2) == False
+    bk = King(2,2,False)
+    wr1 = Rook(1,2,True)
+    B2 = (5, [wb1, wr1, wb2, bk, br1, br2a, br3, wr2a, wk])
+    assert is_check(False, B2) == True
 
 def test_is_check7():
     wb1 = Bishop(1, 1, True)

@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 def location2index(loc: str) -> tuple[int, int]:
     '''converts chess location to corresponding x and y coordinates'''
     location = []
@@ -122,8 +124,24 @@ class Rook(Piece):
         - thirdly, construct new board resulting from move
         - finally, to check [Rule5], use is_check on new board
         '''
+        new_B = deepcopy(B)
+        if self.can_reach(pos_X, pos_Y, B):
+            if is_piece_at(pos_X, pos_Y, B):
+                new_B[1].remove(piece_at(pos_X, pos_Y, B))
+                new_P = Rook(pos_X, pos_Y, self.side_)
+                new_B[1].append(new_P)
+            else:
+                new_P = Rook(pos_X, pos_Y, self.side_)
+                new_B[1].append(new_P)
+            if is_check(self.side_, new_B):
+                return False
+            else:
+                return True
+        else:
+            return False
 
-    def move_to(self, pos_X: int, pos_Y: int, B: Board) -> Board:
+
+def move_to(self, pos_X: int, pos_Y: int, B: Board) -> Board:
         '''
         returns new board resulting from move of this rook to coordinates pos_X, pos_Y on board B 
         assumes this move is valid according to chess rules
@@ -168,8 +186,24 @@ class Bishop(Piece):
 
     def can_move_to(self, pos_X: int, pos_Y: int, B: Board) -> bool:
         '''checks if this bishop can move to coordinates pos_X, pos_Y on board B according to all chess rules'''
+        new_B = deepcopy(B)
+        if self.can_reach(pos_X, pos_Y, B):
+            if is_piece_at(pos_X, pos_Y, B):
+                new_B[1].remove(piece_at(pos_X, pos_Y, B))
+                new_P = Bishop(pos_X, pos_Y, self.side_)
+                new_B[1].append(new_P)
+            else:
+                new_P = Bishop(pos_X, pos_Y, self.side_)
+                new_B[1].append(new_P)
+            if is_check(self.side_, new_B):
+                return False
+            else:
+                return True
+        else:
+            return False
 
-    def move_to(self, pos_X: int, pos_Y: int, B: Board) -> Board:
+
+def move_to(self, pos_X: int, pos_Y: int, B: Board) -> Board:
         '''
         returns new board resulting from move of this bishop to coordinates pos_X, pos_Y on board B 
         assumes this move is valid according to chess rules
@@ -188,15 +222,30 @@ class King(Piece):
         '''checks if this king can move to coordinates pos_X, pos_Y on board B according to rule [Rule3] and [Rule4]'''
         if is_piece_at(pos_X, pos_Y, B) == True and piece_at(pos_X, pos_Y, B).side_ == self.side_:
             return False
-        if abs(self.pos_X-pos_X) <2 and abs(self.pos_Y-pos_Y) <2:
+        if abs(self.pos_X-pos_X) <2 and abs(self.pos_Y-pos_Y) <2 and (pos_X,pos_Y != self.pos_X,pos_Y):
             return True
         else:
             return False
 
     def can_move_to(self, pos_X: int, pos_Y: int, B: Board) -> bool:
         '''checks if this king can move to coordinates pos_X, pos_Y on board B according to all chess rules'''
+        new_B = deepcopy(B)
+        if self.can_reach(pos_X, pos_Y, B):
+            if is_piece_at(pos_X, pos_Y, B):
+                new_B[1].remove(piece_at(pos_X, pos_Y, B))
+                new_P = King(pos_X, pos_Y, self.side_)
+                new_B[1].append(new_P)
+            else:
+                new_P = King(pos_X, pos_Y, self.side_)
+                new_B[1].append(new_P)
+            if is_check(self.side_, new_B):
+                return False
+            else:
+                return True
+        else:
+            return False
 
-    def move_to(self, pos_X: int, pos_Y: int, B: Board) -> Board:
+def move_to(self, pos_X: int, pos_Y: int, B: Board) -> Board:
         '''
         returns new board resulting from move of this king to coordinates pos_X, pos_Y on board B 
         assumes this move is valid according to chess rules
@@ -210,6 +259,7 @@ def is_check(side: bool, B: Board) -> bool:
     '''
     king_x = 0
     king_y = 0
+    check = None
     for j in B[1]:
         if side == j.side_ and type(j) == King:
             king_x = j.pos_X
@@ -230,6 +280,14 @@ def is_checkmate(side: bool, B: Board) -> bool:
     - use is_check
     - use can_reach 
     '''
+    king_x = 0
+    king_y = 0
+    for j in B[1]:
+        if side == j.side_ and type(j) == King:
+            king_x = j.pos_X
+            king_y = j.pos_Y
+
+
 
 
 def read_board(filename: str) -> Board:
