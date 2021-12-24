@@ -1,12 +1,14 @@
-from copy import deepcopy
+from copy import deepcopy, copy
+import itertools
 
-def location2index(loc: str) -> tuple[int, int]:
+def location2index(loc: str) -> tuple[int, ...]:
     '''converts chess location to corresponding x and y coordinates'''
     location = []
     newloc = []
     for x in loc:
         if not x.isnumeric():
             x = ord(x) - 96
+            int(x)
             location.append(x)
         else:
             int(x)
@@ -83,7 +85,8 @@ class Rook(Piece):
         on board B according to rule [Rule2] and [Rule4](see section Intro)
         Hint: use is_piece_at
         '''
-        if is_piece_at(pos_X, pos_Y, B) == True and piece_at(pos_X, pos_Y, B).side_ == self.side_:
+        if is_piece_at(pos_X, pos_Y, B) == True and piece_at(pos_X, pos_Y, B).side_ == self.side_ \
+                or (pos_X >  B[0]) or (pos_Y > B[0]):
             return False
         else:
             if pos_X == self.pos_X or pos_Y == self.pos_Y:
@@ -93,7 +96,7 @@ class Rook(Piece):
                         if is_piece_at(self.pos_X, y, B):
                             path_clear = False
                             break
-                    for y in range(self.pos_Y + 1, pos_Y, -1):
+                    for y in range(self.pos_Y-1, pos_Y, -1):
                         if is_piece_at(self.pos_X, y, B):
                             path_clear = False
                             break
@@ -102,7 +105,7 @@ class Rook(Piece):
                         if is_piece_at(x, self.pos_Y, B):
                             path_clear = False
                             break
-                    for x in range(self.pos_X + 1, pos_X, -1):
+                    for x in range(self.pos_X-1, pos_X, -1):
                         if is_piece_at(x, self.pos_Y, B):
                             path_clear = False
                             break
@@ -124,14 +127,16 @@ class Rook(Piece):
         - thirdly, construct new board resulting from move
         - finally, to check [Rule5], use is_check on new board
         '''
-        new_B = deepcopy(B)
+        new_B = copy(B)
         if self.can_reach(pos_X, pos_Y, B):
             if is_piece_at(pos_X, pos_Y, B):
                 new_B[1].remove(piece_at(pos_X, pos_Y, B))
                 new_P = Rook(pos_X, pos_Y, self.side_)
+                new_B[1].remove(self)
                 new_B[1].append(new_P)
             else:
                 new_P = Rook(pos_X, pos_Y, self.side_)
+                new_B[1].remove(self)
                 new_B[1].append(new_P)
             if is_check(self.side_, new_B):
                 return False
@@ -160,7 +165,8 @@ class Bishop(Piece):
         '''checks if this bishop can move to coordinates pos_X, pos_Y on board B according to rule [Rule1] and [Rule4]'''
         x = abs(self.pos_X - pos_X)
         y = abs(self.pos_Y - pos_Y)
-        if is_piece_at(pos_X, pos_Y, B) == True and piece_at(pos_X, pos_Y, B).side_ == self.side_:
+        if is_piece_at(pos_X, pos_Y, B) == True and piece_at(pos_X, pos_Y, B).side_ == self.side_ \
+                or (pos_X >  B[0]) or (pos_Y > B[0]):
             return False
         else:
             path_clear = True
@@ -186,14 +192,16 @@ class Bishop(Piece):
 
     def can_move_to(self, pos_X: int, pos_Y: int, B: Board) -> bool:
         '''checks if this bishop can move to coordinates pos_X, pos_Y on board B according to all chess rules'''
-        new_B = deepcopy(B)
+        new_B = copy(B)
         if self.can_reach(pos_X, pos_Y, B):
             if is_piece_at(pos_X, pos_Y, B):
                 new_B[1].remove(piece_at(pos_X, pos_Y, B))
                 new_P = Bishop(pos_X, pos_Y, self.side_)
+                new_B[1].remove(self)
                 new_B[1].append(new_P)
             else:
                 new_P = Bishop(pos_X, pos_Y, self.side_)
+                new_B[1].remove(self)
                 new_B[1].append(new_P)
             if is_check(self.side_, new_B):
                 return False
@@ -222,21 +230,24 @@ class King(Piece):
         '''checks if this king can move to coordinates pos_X, pos_Y on board B according to rule [Rule3] and [Rule4]'''
         if is_piece_at(pos_X, pos_Y, B) == True and piece_at(pos_X, pos_Y, B).side_ == self.side_:
             return False
-        if abs(self.pos_X-pos_X) <2 and abs(self.pos_Y-pos_Y) <2 and (pos_X,pos_Y != self.pos_X,pos_Y):
+        if abs(self.pos_X-pos_X) <2 and abs(self.pos_Y-pos_Y) <2 and \
+                (pos_X,pos_Y != self.pos_X,self.pos_Y) and (pos_X < B[0]) and (pos_Y < B[0]):
             return True
         else:
             return False
 
     def can_move_to(self, pos_X: int, pos_Y: int, B: Board) -> bool:
         '''checks if this king can move to coordinates pos_X, pos_Y on board B according to all chess rules'''
-        new_B = deepcopy(B)
+        new_B = copy(B)
         if self.can_reach(pos_X, pos_Y, B):
             if is_piece_at(pos_X, pos_Y, B):
                 new_B[1].remove(piece_at(pos_X, pos_Y, B))
                 new_P = King(pos_X, pos_Y, self.side_)
+                new_B[1].remove(self)
                 new_B[1].append(new_P)
             else:
                 new_P = King(pos_X, pos_Y, self.side_)
+                new_B[1].remove(self)
                 new_B[1].append(new_P)
             if is_check(self.side_, new_B):
                 return False
@@ -286,8 +297,22 @@ def is_checkmate(side: bool, B: Board) -> bool:
         if side == j.side_ and type(j) == King:
             king_x = j.pos_X
             king_y = j.pos_Y
-
-
+    king = piece_at(king_x,king_y,B)
+    king_moves = (list(itertools.product([king_x-1,king_x+1,king_x],[king_y,king_y+1,king_y-1])))
+    valid_king_moves =[]
+    for i in king_moves:
+        if king.can_reach(i[0],i[1],B):
+            valid_king_moves.append(i)
+    for i in B[1]:
+        for j in valid_king_moves:
+            if side != i.side_ and i.can_reach(j[0],j[1],B):
+                pass
+            else:
+                pass
+    if valid_king_moves == []:
+        return True
+    else:
+        return valid_king_moves
 
 
 def read_board(filename: str) -> Board:

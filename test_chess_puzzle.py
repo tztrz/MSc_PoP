@@ -103,6 +103,20 @@ def test_can_reach14():
     B2 = (5, [wb1, wr1, wb2, bk, br1, br2, br3, wr2b, wk])
     assert wr2b.can_reach(2,3,B2) == False
 
+def test_can_reach15():
+    wb1 = Bishop(1, 1, True)
+    wr1 = Rook(1, 2, True)
+    wb2 = Bishop(5, 2, True)
+    bk = King(2, 3, False)
+    br1 = Rook(4, 3, False)
+    br2 = Rook(2, 4, False)
+    br3 = Rook(5, 4, False)
+    wr2 = Rook(1, 5, True)
+    wk = King(3, 5, True)
+
+    B1 = (5, [wb1, wr1, wb2, bk, br1, br2, br3, wr2, wk])
+    assert wr2.can_reach(1,4,B1) == True
+
 br2a = Rook(1,5,False)
 wr2a = Rook(2,5,True)
 bb1 = Bishop(2,1,False)
@@ -126,7 +140,7 @@ def test_can_move_to4():
 
 def test_can_move_to5():
     wr2 = Rook(3,3,True)
-    br2a = Rook(1,3, False)
+    br2a = Rook(3,1, False)
     B2 = (5, [wb1, wr1, wb2, bk, br1, br2a, br3, wr2a, wr2, wk])
     assert wr2.can_move_to(2,3,B2) == False
 
@@ -190,6 +204,22 @@ def test_is_checkmate1():
     br2b = Rook(4,5,False)
     B2 = (5, [wb1, wr1, wb2, bk, br1, br2b, br3, wr2, wk])
     assert is_checkmate(True, B2) == True
+
+def test_is_checkmate2():
+    br2b = Rook(2, 2, False)
+    br1a = Rook(5,5, False)
+    B2 = (5, [wb1, wr1, wb2, bk, br1a, br2b, br3, wr2, wk])
+    assert is_checkmate(True, B2) == True
+
+def test_is_checkmate3():
+    wr1a = Rook(4, 3, True)
+    br2b = Rook(2, 4, False)
+    wb2 = Bishop(4, 1, True)
+    wr2c = Rook(1, 5, True)
+    wb1 = Bishop(1, 1, True)
+    B2 = (5, [wb1, wr1a, wb2, bk, br1, br2b, br3, wr2c, wk])
+    assert is_checkmate(False, B2) == True
+
 
 def test_read_board1():
     B = read_board("board_examp.txt")
