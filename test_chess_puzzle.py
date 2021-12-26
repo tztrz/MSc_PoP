@@ -238,6 +238,19 @@ def test_is_checkmate4():
     B1 = (5, [wb1, wr1, wb2, bk, br1, br2, br3, wr2, wk])
     assert is_checkmate(True, B1) == False
 
+def test_move_to1():
+    wb1 = Bishop(1, 1, True)
+    wr1 = Rook(1, 2, True)
+    wb2 = Bishop(5, 2, True)
+    bk = King(2, 3, False)
+    br1 = Rook(4, 3, False)
+    br2 = Rook(2, 4, False)
+    br3 = Rook(5, 4, False)
+    wr2 = Rook(1, 5, True)
+    wk = King(3, 5, True)
+
+    B1 = (5, [wb1, wr1, wb2, bk, br1, br2, br3, wr2, wk])
+    assert wb2.move_to(4,3,B1) == (5, [wb1, wr1, wb2, bk, br2, br3, wr2, wk])
 
 
 def test_read_board1():

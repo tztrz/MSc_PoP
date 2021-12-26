@@ -157,6 +157,14 @@ def move_to(self, pos_X: int, pos_Y: int, B: Board) -> Board:
         returns new board resulting from move of this rook to coordinates pos_X, pos_Y on board B 
         assumes this move is valid according to chess rules
         '''
+        if is_piece_at(pos_X,pos_Y,B):
+            B[1].remove(piece_at(pos_X,pos_Y,B))
+            self.pos_X = pos_X
+            self.pos_Y = pos_Y
+        else:
+            self.pos_X = pos_X
+            self.pos_Y = pos_Y
+        return B
 
 
 class Bishop(Piece):
@@ -217,11 +225,19 @@ class Bishop(Piece):
             return False
 
 
-def move_to(self, pos_X: int, pos_Y: int, B: Board) -> Board:
+    def move_to(self, pos_X: int, pos_Y: int, B: Board) -> Board:
         '''
         returns new board resulting from move of this bishop to coordinates pos_X, pos_Y on board B 
         assumes this move is valid according to chess rules
         '''
+        if is_piece_at(pos_X, pos_Y, B):
+            B[1].remove(piece_at(pos_X, pos_Y, B))
+            self.pos_X = pos_X
+            self.pos_Y = pos_Y
+        else:
+            self.pos_X = pos_X
+            self.pos_Y = pos_Y
+        return B
 
 
 class King(Piece):
@@ -262,11 +278,19 @@ class King(Piece):
         else:
             return False
 
-def move_to(self, pos_X: int, pos_Y: int, B: Board) -> Board:
+    def move_to(self, pos_X: int, pos_Y: int, B: Board) -> Board:
         '''
         returns new board resulting from move of this king to coordinates pos_X, pos_Y on board B 
         assumes this move is valid according to chess rules
         '''
+        if is_piece_at(pos_X, pos_Y, B):
+            B[1].remove(piece_at(pos_X, pos_Y, B))
+            self.pos_X = pos_X
+            self.pos_Y = pos_Y
+        else:
+            self.pos_X = pos_X
+            self.pos_Y = pos_Y
+        return B
 
 
 def is_check(side: bool, B: Board) -> bool:
@@ -297,7 +321,6 @@ def is_checkmate(side: bool, B: Board) -> bool:
     - use is_check
     - use can_reach 
     '''
-
     board = []
     side_moves = []
     for i in range (1,B[0]+1):
