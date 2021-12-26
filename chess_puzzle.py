@@ -38,7 +38,13 @@ class Piece:
         self.pos_Y = pos_Y
         self.side_ = side_
 
+    def __eq__(self, other):
+        return  self.pos_X == other.pos_X and self.pos_Y == other.pos_Y and self.side_ == other.side_
+
     def can_reach(self, pos_X, pos_Y, B):
+        pass
+
+    def can_move_to(self, pos_X, pos_Y, B):
         pass
 
 
@@ -132,11 +138,11 @@ class Rook(Piece):
             if is_piece_at(pos_X, pos_Y, B):
                 new_B[1].remove(piece_at(pos_X, pos_Y, B))
                 new_P = Rook(pos_X, pos_Y, self.side_)
-                new_B[1].remove(self)
+                new_B[1].remove(piece_at(self.pos_X,self.pos_Y,B))
                 new_B[1].append(new_P)
             else:
                 new_P = Rook(pos_X, pos_Y, self.side_)
-                new_B[1].remove(self)
+                new_B[1].remove(piece_at(self.pos_X,self.pos_Y,B))
                 new_B[1].append(new_P)
             if is_check(self.side_, new_B):
                 return False
@@ -197,11 +203,11 @@ class Bishop(Piece):
             if is_piece_at(pos_X, pos_Y, B):
                 new_B[1].remove(piece_at(pos_X, pos_Y, B))
                 new_P = Bishop(pos_X, pos_Y, self.side_)
-                new_B[1].remove(self)
+                new_B[1].remove(piece_at(self.pos_X,self.pos_Y,B))
                 new_B[1].append(new_P)
             else:
                 new_P = Bishop(pos_X, pos_Y, self.side_)
-                new_B[1].remove(self)
+                new_B[1].remove(piece_at(self.pos_X,self.pos_Y,B))
                 new_B[1].append(new_P)
             if is_check(self.side_, new_B):
                 return False
@@ -243,11 +249,11 @@ class King(Piece):
             if is_piece_at(pos_X, pos_Y, B):
                 new_B[1].remove(piece_at(pos_X, pos_Y, B))
                 new_P = King(pos_X, pos_Y, self.side_)
-                new_B[1].remove(self)
+                new_B[1].remove(piece_at(self.pos_X,self.pos_Y,B))
                 new_B[1].append(new_P)
             else:
                 new_P = King(pos_X, pos_Y, self.side_)
-                new_B[1].remove(self)
+                new_B[1].remove(piece_at(self.pos_X,self.pos_Y,B))
                 new_B[1].append(new_P)
             if is_check(self.side_, new_B):
                 return False
@@ -291,29 +297,31 @@ def is_checkmate(side: bool, B: Board) -> bool:
     - use is_check
     - use can_reach 
     '''
-    king_x = 0
-    king_y = 0
-    for j in B[1]:
-        if side == j.side_ and type(j) == King:
-            king_x = j.pos_X
-            king_y = j.pos_Y
-    king = piece_at(king_x,king_y,B)
-    king_moves = (list(itertools.product([king_x-1,king_x+1,king_x],[king_y,king_y+1,king_y-1])))
-    valid_king_moves =[]
-    for i in king_moves:
-        if king.can_reach(i[0],i[1],B):
-            valid_king_moves.append(i)
+
+    board = []
+    side_moves = []
+    for i in range (1,B[0]+1):
+        for j in range(1,B[0]+1):
+            board.append((i,j))
     for i in B[1]:
-        for j in valid_king_moves:
-            if side != i.side_ and i.can_reach(j[0],j[1],B):
-                pass
-            else:
-                pass
-    if valid_king_moves == []:
+        for j in board:
+            temp_board = deepcopy(B)
+            if i.side_ == side and i.can_reach(j[0],j[1],B):
+                if is_piece_at(j[0], j[1], B):
+                    temp_board[1].remove(piece_at(j[0], j[1], B))
+                    new_P = i.__class__(j[0], j[1], i.side_)
+                    temp_board[1].remove(i)
+                    temp_board[1].append(new_P)
+                else:
+                    new_P = i.__class__(j[0], j[1], i.side_)
+                    temp_board[1].remove(i)
+                    temp_board[1].append(new_P)
+                if not is_check(side, temp_board):
+                    side_moves.append([i,j])
+    if side_moves == []:
         return True
     else:
-        return valid_king_moves
-
+        return False
 
 def read_board(filename: str) -> Board:
     '''
