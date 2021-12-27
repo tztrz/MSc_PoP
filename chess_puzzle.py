@@ -1,6 +1,7 @@
-import shlex
 from copy import deepcopy, copy
 
+# TODO: add comments to explain functionality
+# TODO: tidy repetitive statements if possible
 
 def location2index(loc: str) -> tuple[int, ...]:
     '''converts chess location to corresponding x and y coordinates'''
@@ -227,7 +228,7 @@ class Bishop(Piece):
 
     def move_to(self, pos_X: int, pos_Y: int, B: Board) -> Board:
         '''
-        returns new board resulting from move of this bishop to coordinates pos_X, pos_Y on board B 
+        returns new board resulting from move of this bishop to coordinates pos_X, pos_Y on board B
         assumes this move is valid according to chess rules
         '''
         if is_piece_at(pos_X, pos_Y, B):
@@ -348,7 +349,8 @@ def is_checkmate(side: bool, B: Board) -> bool:
         return False
 
 
-def create_piece(code, x, y, side):
+
+def create_piece(code:str , x:int, y:int, side:bool) -> Piece:
     piece_codes = {'B': Bishop, 'K': King, 'R': Rook}
     return piece_codes[code](x, y, side)
 
@@ -358,12 +360,10 @@ def read_board(filename: str) -> Board:
     reads board configuration from file in current directory in plain format
     raises IOError exception if file is not valid (see section Plain board configurations)
     '''
-    B = []
     white_pieces_final = []
     black_pieces_final = []
     with open(filename, "r") as fl:
         lines = fl.readlines()
-        B.append(int(lines[0].rstrip()))
 
         white_pieces = lines[1].rstrip().split(",")
         white_pieces = [s.strip() for s in white_pieces]
@@ -378,14 +378,44 @@ def read_board(filename: str) -> Board:
             black_pieces_final.append(create_piece(i[0][0], i[1][0], i[1][1], False))
 
         fl.close()
-    B.append(white_pieces_final + black_pieces_final)
+    pieces = white_pieces_final + black_pieces_final
+    pieces_locations = white_pieces_locations + black_pieces_locations
 
-    return B
-
+    B = (int(lines[0].rstrip()), pieces)
+    pieces_over = []
+    [pieces_over.append(x) for x in pieces_locations if x[0] > B[0] or x[1] > B[0]]
+    if len(set(pieces_locations)) < len(pieces):
+        raise IOError("More than one piece in the same location")
+    elif len(lines[0].rstrip().split()) > 1:
+        raise IOError("More than one number in line 1")
+    elif pieces_over != []:
+        raise IOError("Pieces located outside of board size")
+    else:
+        return B
 
 def save_board(filename: str) -> None:
     '''saves board configuration into file in current directory in plain format'''
-
+    piece_codes = {King:'K',Bishop:'B',Rook:'R'}
+    B_current = read_board(filename)
+    size = str(Board[0])
+    white_pieces = []
+    black_pieces = []
+    for piece in Board[1]:
+        if piece.side_:
+            x = piece.pos_X
+            y = piece.pos_Y
+            code = piece_codes[piece.__class__]
+            white_pieces.append(str(code)+index2location(x,y))
+        else:
+            x = piece.pos_X
+            y = piece.pos_Y
+            code = piece_codes[piece.__class__]
+            black_pieces.append(str(code) + index2location(x, y))
+    with open(filename,"w") as fl:
+        fl.write(size + "\n")
+        fl.write(white_pieces+"\n")
+        fl.write(black_pieces+"\n")
+        fl.close()
 
 def find_black_move(B: Board) -> tuple[Piece, int, int]:
     '''
@@ -396,6 +426,7 @@ def find_black_move(B: Board) -> tuple[Piece, int, int]:
     - use methods of random library
     - use can_move_to
     '''
+    # FIXME
 
 
 def conf2unicode(B: Board) -> str:
@@ -411,7 +442,9 @@ def main() -> None:
     ...
     '''
     filename = input("File name for initial configuration: ")
-    read_board(filename)
+    Board = read_board(filename)
+
+
 
 
 if __name__ == '__main__':  # keep this in
