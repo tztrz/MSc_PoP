@@ -348,10 +348,8 @@ def is_checkmate(side: bool, B: Board) -> bool:
         return False
 
 
-piece_codes = {'B': Bishop, 'K': King, 'R': Rook}
-
-
 def create_piece(code, x, y, side):
+    piece_codes = {'B': Bishop, 'K': King, 'R': Rook}
     return piece_codes[code](x, y, side)
 
 
@@ -361,6 +359,8 @@ def read_board(filename: str) -> Board:
     raises IOError exception if file is not valid (see section Plain board configurations)
     '''
     B = []
+    white_pieces_final = []
+    black_pieces_final = []
     with open(filename, "r") as fl:
         lines = fl.readlines()
         B.append(int(lines[0].rstrip()))
@@ -368,39 +368,18 @@ def read_board(filename: str) -> Board:
         white_pieces = lines[1].rstrip().split(",")
         white_pieces = [s.strip() for s in white_pieces]
         white_pieces_locations = [location2index(piece[1:]) for piece in white_pieces]
-        white_pieces = ['w' + piece[:-2] for piece in white_pieces]
-        unique_wp = set(white_pieces)
-        for j in unique_wp:
-            count = 0
-            for i, piece in enumerate(white_pieces):
-                if piece == j:
-                    count += 1
-                    if count >= 1 and piece != 'wK':
-                        white_pieces[i] = piece + str(count)
+        for i in zip(white_pieces, white_pieces_locations):
+            white_pieces_final.append(create_piece(i[0][0], i[1][0], i[1][1], True))
 
         black_pieces = lines[2].rstrip().split(",")
         black_pieces = [s.strip() for s in black_pieces]
         black_pieces_locations = [location2index(piece[1:]) for piece in black_pieces]
-        black_pieces = ['b' + piece[:-2] for piece in black_pieces]
-        unique_bp = set(black_pieces)
-        for j in unique_bp:
-            count = 0
-            for i, piece in enumerate(black_pieces):
-                if piece == j:
-                    count += 1
-                    if count >= 1 and piece != 'bK':
-                        black_pieces[i] = piece + str(count)
-
-        white_pieces_final = []
-        black_pieces_final = []
-        for i in zip(white_pieces, white_pieces_locations):
-            white_pieces_final.append(create_piece(i[0][1], i[1][0], i[1][1], True))
         for i in zip(black_pieces, black_pieces_locations):
-            black_pieces_final.append(create_piece(i[0][1], i[1][0], i[1][1], False))
+            black_pieces_final.append(create_piece(i[0][0], i[1][0], i[1][1], False))
+
         fl.close()
-        pieces = white_pieces_final + black_pieces_final
-        B.append(pieces)
-        fl.close()
+    B.append(white_pieces_final + black_pieces_final)
+
     return B
 
 
@@ -431,8 +410,8 @@ def main() -> None:
     filename = input("File name for initial configuration: ")
     ...
     '''
-    B = read_board("board_examp.txt")
-    print(B)
+    filename = input("File name for initial configuration: ")
+    read_board(filename)
 
 
 if __name__ == '__main__':  # keep this in
