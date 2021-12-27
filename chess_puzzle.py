@@ -1,5 +1,6 @@
+import shlex
 from copy import deepcopy, copy
-import itertools
+
 
 def location2index(loc: str) -> tuple[int, ...]:
     '''converts chess location to corresponding x and y coordinates'''
@@ -39,7 +40,7 @@ class Piece:
         self.side_ = side_
 
     def __eq__(self, other):
-        return  self.pos_X == other.pos_X and self.pos_Y == other.pos_Y and self.side_ == other.side_
+        return self.pos_X == other.pos_X and self.pos_Y == other.pos_Y and self.side_ == other.side_
 
     def can_reach(self, pos_X, pos_Y, B):
         pass
@@ -92,7 +93,7 @@ class Rook(Piece):
         Hint: use is_piece_at
         '''
         if is_piece_at(pos_X, pos_Y, B) == True and piece_at(pos_X, pos_Y, B).side_ == self.side_ \
-                or (pos_X >  B[0]) or (pos_Y > B[0]):
+                or (pos_X > B[0]) or (pos_Y > B[0]):
             return False
         else:
             if pos_X == self.pos_X or pos_Y == self.pos_Y:
@@ -102,7 +103,7 @@ class Rook(Piece):
                         if is_piece_at(self.pos_X, y, B):
                             path_clear = False
                             break
-                    for y in range(self.pos_Y-1, pos_Y, -1):
+                    for y in range(self.pos_Y - 1, pos_Y, -1):
                         if is_piece_at(self.pos_X, y, B):
                             path_clear = False
                             break
@@ -111,7 +112,7 @@ class Rook(Piece):
                         if is_piece_at(x, self.pos_Y, B):
                             path_clear = False
                             break
-                    for x in range(self.pos_X-1, pos_X, -1):
+                    for x in range(self.pos_X - 1, pos_X, -1):
                         if is_piece_at(x, self.pos_Y, B):
                             path_clear = False
                             break
@@ -138,11 +139,11 @@ class Rook(Piece):
             if is_piece_at(pos_X, pos_Y, B):
                 new_B[1].remove(piece_at(pos_X, pos_Y, B))
                 new_P = Rook(pos_X, pos_Y, self.side_)
-                new_B[1].remove(piece_at(self.pos_X,self.pos_Y,B))
+                new_B[1].remove(piece_at(self.pos_X, self.pos_Y, B))
                 new_B[1].append(new_P)
             else:
                 new_P = Rook(pos_X, pos_Y, self.side_)
-                new_B[1].remove(piece_at(self.pos_X,self.pos_Y,B))
+                new_B[1].remove(piece_at(self.pos_X, self.pos_Y, B))
                 new_B[1].append(new_P)
             if is_check(self.side_, new_B):
                 return False
@@ -153,18 +154,18 @@ class Rook(Piece):
 
 
 def move_to(self, pos_X: int, pos_Y: int, B: Board) -> Board:
-        '''
+    '''
         returns new board resulting from move of this rook to coordinates pos_X, pos_Y on board B 
         assumes this move is valid according to chess rules
         '''
-        if is_piece_at(pos_X,pos_Y,B):
-            B[1].remove(piece_at(pos_X,pos_Y,B))
-            self.pos_X = pos_X
-            self.pos_Y = pos_Y
-        else:
-            self.pos_X = pos_X
-            self.pos_Y = pos_Y
-        return B
+    if is_piece_at(pos_X, pos_Y, B):
+        B[1].remove(piece_at(pos_X, pos_Y, B))
+        self.pos_X = pos_X
+        self.pos_Y = pos_Y
+    else:
+        self.pos_X = pos_X
+        self.pos_Y = pos_Y
+    return B
 
 
 class Bishop(Piece):
@@ -180,7 +181,7 @@ class Bishop(Piece):
         x = abs(self.pos_X - pos_X)
         y = abs(self.pos_Y - pos_Y)
         if is_piece_at(pos_X, pos_Y, B) == True and piece_at(pos_X, pos_Y, B).side_ == self.side_ \
-                or (pos_X >  B[0]) or (pos_Y > B[0]):
+                or (pos_X > B[0]) or (pos_Y > B[0]):
             return False
         else:
             path_clear = True
@@ -211,11 +212,11 @@ class Bishop(Piece):
             if is_piece_at(pos_X, pos_Y, B):
                 new_B[1].remove(piece_at(pos_X, pos_Y, B))
                 new_P = Bishop(pos_X, pos_Y, self.side_)
-                new_B[1].remove(piece_at(self.pos_X,self.pos_Y,B))
+                new_B[1].remove(piece_at(self.pos_X, self.pos_Y, B))
                 new_B[1].append(new_P)
             else:
                 new_P = Bishop(pos_X, pos_Y, self.side_)
-                new_B[1].remove(piece_at(self.pos_X,self.pos_Y,B))
+                new_B[1].remove(piece_at(self.pos_X, self.pos_Y, B))
                 new_B[1].append(new_P)
             if is_check(self.side_, new_B):
                 return False
@@ -223,7 +224,6 @@ class Bishop(Piece):
                 return True
         else:
             return False
-
 
     def move_to(self, pos_X: int, pos_Y: int, B: Board) -> Board:
         '''
@@ -252,8 +252,8 @@ class King(Piece):
         '''checks if this king can move to coordinates pos_X, pos_Y on board B according to rule [Rule3] and [Rule4]'''
         if is_piece_at(pos_X, pos_Y, B) == True and piece_at(pos_X, pos_Y, B).side_ == self.side_:
             return False
-        if abs(self.pos_X-pos_X) <2 and abs(self.pos_Y-pos_Y) <2 and \
-                (pos_X,pos_Y != self.pos_X,self.pos_Y) and (pos_X < B[0]) and (pos_Y < B[0]):
+        if abs(self.pos_X - pos_X) < 2 and abs(self.pos_Y - pos_Y) < 2 and \
+                (pos_X, pos_Y != self.pos_X, self.pos_Y) and (pos_X < B[0]) and (pos_Y < B[0]):
             return True
         else:
             return False
@@ -265,11 +265,11 @@ class King(Piece):
             if is_piece_at(pos_X, pos_Y, B):
                 new_B[1].remove(piece_at(pos_X, pos_Y, B))
                 new_P = King(pos_X, pos_Y, self.side_)
-                new_B[1].remove(piece_at(self.pos_X,self.pos_Y,B))
+                new_B[1].remove(piece_at(self.pos_X, self.pos_Y, B))
                 new_B[1].append(new_P)
             else:
                 new_P = King(pos_X, pos_Y, self.side_)
-                new_B[1].remove(piece_at(self.pos_X,self.pos_Y,B))
+                new_B[1].remove(piece_at(self.pos_X, self.pos_Y, B))
                 new_B[1].append(new_P)
             if is_check(self.side_, new_B):
                 return False
@@ -313,6 +313,7 @@ def is_check(side: bool, B: Board) -> bool:
             check = False
     return check
 
+
 def is_checkmate(side: bool, B: Board) -> bool:
     '''
     checks if configuration of B is checkmate for side
@@ -323,13 +324,13 @@ def is_checkmate(side: bool, B: Board) -> bool:
     '''
     board = []
     side_moves = []
-    for i in range (1,B[0]+1):
-        for j in range(1,B[0]+1):
-            board.append((i,j))
+    for i in range(1, B[0] + 1):
+        for j in range(1, B[0] + 1):
+            board.append((i, j))
     for i in B[1]:
         for j in board:
             temp_board = deepcopy(B)
-            if i.side_ == side and i.can_reach(j[0],j[1],B):
+            if i.side_ == side and i.can_reach(j[0], j[1], B):
                 if is_piece_at(j[0], j[1], B):
                     temp_board[1].remove(piece_at(j[0], j[1], B))
                     new_P = i.__class__(j[0], j[1], i.side_)
@@ -340,17 +341,67 @@ def is_checkmate(side: bool, B: Board) -> bool:
                     temp_board[1].remove(i)
                     temp_board[1].append(new_P)
                 if not is_check(side, temp_board):
-                    side_moves.append([i,j])
+                    side_moves.append([i, j])
     if side_moves == []:
         return True
     else:
         return False
+
+
+piece_codes = {'B': Bishop, 'K': King, 'R': Rook}
+
+
+def create_piece(code, x, y, side):
+    return piece_codes[code](x, y, side)
+
 
 def read_board(filename: str) -> Board:
     '''
     reads board configuration from file in current directory in plain format
     raises IOError exception if file is not valid (see section Plain board configurations)
     '''
+    B = []
+    with open(filename, "r") as fl:
+        lines = fl.readlines()
+        B.append(int(lines[0].rstrip()))
+
+        white_pieces = lines[1].rstrip().split(",")
+        white_pieces = [s.strip() for s in white_pieces]
+        white_pieces_locations = [location2index(piece[1:]) for piece in white_pieces]
+        white_pieces = ['w' + piece[:-2] for piece in white_pieces]
+        unique_wp = set(white_pieces)
+        for j in unique_wp:
+            count = 0
+            for i, piece in enumerate(white_pieces):
+                if piece == j:
+                    count += 1
+                    if count >= 1 and piece != 'wK':
+                        white_pieces[i] = piece + str(count)
+
+        black_pieces = lines[2].rstrip().split(",")
+        black_pieces = [s.strip() for s in black_pieces]
+        black_pieces_locations = [location2index(piece[1:]) for piece in black_pieces]
+        black_pieces = ['b' + piece[:-2] for piece in black_pieces]
+        unique_bp = set(black_pieces)
+        for j in unique_bp:
+            count = 0
+            for i, piece in enumerate(black_pieces):
+                if piece == j:
+                    count += 1
+                    if count >= 1 and piece != 'bK':
+                        black_pieces[i] = piece + str(count)
+
+        white_pieces_final = []
+        black_pieces_final = []
+        for i in zip(white_pieces, white_pieces_locations):
+            white_pieces_final.append(create_piece(i[0][1], i[1][0], i[1][1], True))
+        for i in zip(black_pieces, black_pieces_locations):
+            black_pieces_final.append(create_piece(i[0][1], i[1][0], i[1][1], False))
+        fl.close()
+        pieces = white_pieces_final + black_pieces_final
+        B.append(pieces)
+        fl.close()
+    return B
 
 
 def save_board(filename: str) -> None:
@@ -380,7 +431,8 @@ def main() -> None:
     filename = input("File name for initial configuration: ")
     ...
     '''
-    filename = input("File name for initial configuration:")
+    B = read_board("board_examp.txt")
+    print(B)
 
 
 if __name__ == '__main__':  # keep this in

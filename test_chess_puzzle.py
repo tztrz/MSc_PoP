@@ -260,14 +260,14 @@ def test_read_board1():
     for piece in B[1]:  #we check if every piece in B is also present in B1; if not, the test will fail
         found = False
         for piece1 in B1[1]:
-            if piece.pos_x == piece1.pos_x and piece.pos_y == piece1.pos_y and piece.side == piece1.side and type(piece) == type(piece1):
+            if piece.pos_X == piece1.pos_X and piece.pos_Y == piece1.pos_Y and piece.side_ == piece1.side_ and type(piece) == type(piece1):
                 found = True
         assert found
 
     for piece1 in B1[1]: #we check if every piece in B1 is also present in B; if not, the test will fail
         found = False
         for piece in B[1]:
-            if piece.pos_x == piece1.pos_x and piece.pos_y == piece1.pos_y and piece.side == piece1.side and type(piece) == type(piece1):
+            if piece.pos_X == piece1.pos_X and piece.pos_Y == piece1.pos_Y and piece.side_ == piece1.side_ and type(piece) == type(piece1):
                 found = True
         assert found
 
