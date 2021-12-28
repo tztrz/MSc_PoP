@@ -326,3 +326,6 @@ def test_read_board1():
 
 def test_conf2unicode1():
     assert conf2unicode(B1) == "♖ ♔  \n ♜  ♜\n ♚ ♜ \n♖   ♗\n♗    "
+
+def test_find_black_move():
+    assert find_black_move(B1) == False

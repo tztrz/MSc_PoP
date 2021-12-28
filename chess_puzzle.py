@@ -1,4 +1,5 @@
 from copy import deepcopy, copy
+import random
 
 # TODO: add comments to explain functionality
 # TODO: tidy repetitive statements if possible
@@ -426,7 +427,29 @@ def find_black_move(B: Board) -> tuple[Piece, int, int]:
     - use methods of random library
     - use can_move_to
     '''
-    # FIXME
+    board = []
+    possible_moves = []
+    for i in range(1,B[0]+1):
+        for j in range(1,B[0]+1):
+            board.append((i,j))
+    for piece in B[1]:
+        for j in board:
+            temp_board = deepcopy(B)
+            if piece.side_ == False and piece.can_reach(j[0],j[1],B):
+                if is_piece_at(j[0], j[1], B):
+                    temp_board[1].remove(piece_at(j[0], j[1], B))
+                    new_P = piece.__class__(j[0], j[1], piece.side_)
+                    temp_board[1].remove(piece)
+                    temp_board[1].append(new_P)
+                else:
+                    new_P = piece.__class__(j[0], j[1], piece.side_)
+                    temp_board[1].remove(piece)
+                    temp_board[1].append(new_P)
+                if not is_check(False, temp_board):
+                    possible_moves.append((piece, j[0],j[1]))
+        black_move = random.choice(possible_moves)
+        return black_move
+
 
 
 def conf2unicode(B: Board) -> str:
@@ -441,8 +464,8 @@ def main() -> None:
     filename = input("File name for initial configuration: ")
     ...
     '''
-    filename = input("File name for initial configuration: ")
-    Board = read_board(filename)
+    #filename = input("File name for initial configuration: ")
+    #Board = read_board(filename)
 
 
 
