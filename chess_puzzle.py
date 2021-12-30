@@ -453,24 +453,35 @@ def find_black_move(B: Board) -> tuple[Piece, int, int]:
 
 def conf2unicode(B: Board) -> str:
     '''converts board configuration B to unicode format string (see section Unicode board configurations)'''
-    piece_codes_white = {King:"♔", Bishop:"♗", Rook:"♖"}
-    piece_codes_black = {King:"♚",Rook:"♜",Bishop:"	♝"}
+    piece_codes_white = {King: "♔", Bishop: "♗", Rook: "♖"}
+    piece_codes_black = {King: "♚", Rook: "♜", Bishop: "♝"}
     unicode_board = []
-    for i in range(1,B[0]+1):
-        for j in range(1,B[0]+1):
-            unicode_board.append((i,j))
+    for i in range(1, B[0] + 1):
+        for j in range(1, B[0] + 1):
+            unicode_board.append((i, j))
     for piece in B[1]:
         for i in range(len(unicode_board)):
             if piece.side_:
-                if piece.pos_X == unicode_board[i][0] and piece.pos_Y == unicode_board[i][1]:
+                if piece.pos_Y == unicode_board[i][0] and piece.pos_X == unicode_board[i][1]:
                     unicode_board[i] = piece_codes_white[piece.__class__]
                     break
-            else:
-                if piece.pos_X == unicode_board[i][0] and piece.pos_Y == unicode_board[i][1]:
+            elif piece.side_ == False:
+                if piece.pos_Y == unicode_board[i][0] and piece.pos_X == unicode_board[i][1]:
                     unicode_board[i] = piece_codes_black[piece.__class__]
                     break
-    return unicode_board
+    for x in range(len(unicode_board)):
+        if isinstance(unicode_board[x],tuple):
+            unicode_board[x] = "\u2001"
+        str.strip(unicode_board[x])
+    unicode_board = [unicode_board[x:x+B[0]] for x in range(0,len(unicode_board),B[0])]
+    unicode_board.reverse()
+    for x in range(len(unicode_board)):
+        unicode_board[x].append("\n")
+        unicode_board[x] = ''.join(unicode_board[x])
+    unicode_board_fn = ''.join(unicode_board)
+    unicode_board_fn = unicode_board_fn[:-1]
 
+    return unicode_board_fn
 
 
 def main() -> None:
