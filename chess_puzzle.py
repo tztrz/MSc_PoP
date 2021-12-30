@@ -451,9 +451,26 @@ def find_black_move(B: Board) -> tuple[Piece, int, int]:
         return black_move
 
 
-
 def conf2unicode(B: Board) -> str:
     '''converts board configuration B to unicode format string (see section Unicode board configurations)'''
+    piece_codes_white = {King:"♔", Bishop:"♗", Rook:"♖"}
+    piece_codes_black = {King:"♚",Rook:"♜",Bishop:"	♝"}
+    unicode_board = []
+    for i in range(1,B[0]+1):
+        for j in range(1,B[0]+1):
+            unicode_board.append((i,j))
+    for piece in B[1]:
+        for i in range(len(unicode_board)):
+            if piece.side_:
+                if piece.pos_X == unicode_board[i][0] and piece.pos_Y == unicode_board[i][1]:
+                    unicode_board[i] = piece_codes_white[piece.__class__]
+                    break
+            else:
+                if piece.pos_X == unicode_board[i][0] and piece.pos_Y == unicode_board[i][1]:
+                    unicode_board[i] = piece_codes_black[piece.__class__]
+                    break
+    return unicode_board
+
 
 
 def main() -> None:
