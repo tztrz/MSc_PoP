@@ -1,6 +1,7 @@
 from copy import deepcopy, copy
 import random
 
+
 # TODO: add comments to explain functionality
 # TODO: tidy repetitive statements if possible
 
@@ -48,6 +49,9 @@ class Piece:
         pass
 
     def can_move_to(self, pos_X, pos_Y, B):
+        pass
+
+    def move_to(self, pos_X, pos_Y, B):
         pass
 
 
@@ -154,20 +158,19 @@ class Rook(Piece):
         else:
             return False
 
-
-def move_to(self, pos_X: int, pos_Y: int, B: Board) -> Board:
-    '''
-        returns new board resulting from move of this rook to coordinates pos_X, pos_Y on board B 
-        assumes this move is valid according to chess rules
+    def move_to(self, pos_X: int, pos_Y: int, B: Board) -> Board:
         '''
-    if is_piece_at(pos_X, pos_Y, B):
-        B[1].remove(piece_at(pos_X, pos_Y, B))
-        self.pos_X = pos_X
-        self.pos_Y = pos_Y
-    else:
-        self.pos_X = pos_X
-        self.pos_Y = pos_Y
-    return B
+            returns new board resulting from move of this rook to coordinates pos_X, pos_Y on board B
+            assumes this move is valid according to chess rules
+            '''
+        if is_piece_at(pos_X, pos_Y, B):
+            B[1].remove(piece_at(pos_X, pos_Y, B))
+            self.pos_X = pos_X
+            self.pos_Y = pos_Y
+        else:
+            self.pos_X = pos_X
+            self.pos_Y = pos_Y
+        return B
 
 
 class Bishop(Piece):
@@ -350,8 +353,7 @@ def is_checkmate(side: bool, B: Board) -> bool:
         return False
 
 
-
-def create_piece(code:str , x:int, y:int, side:bool) -> Piece:
+def create_piece(code: str, x: int, y: int, side: bool) -> Piece:
     piece_codes = {'B': Bishop, 'K': King, 'R': Rook}
     return piece_codes[code](x, y, side)
 
@@ -386,37 +388,40 @@ def read_board(filename: str) -> Board:
     pieces_over = []
     [pieces_over.append(x) for x in pieces_locations if x[0] > B[0] or x[1] > B[0]]
     if len(set(pieces_locations)) < len(pieces):
-        raise IOError("More than one piece in the same location")
+        raise IOError
     elif len(lines[0].rstrip().split()) > 1:
-        raise IOError("More than one number in line 1")
+        raise IOError
     elif pieces_over != []:
-        raise IOError("Pieces located outside of board size")
+        raise IOError
     else:
         return B
 
-def save_board(filename: str) -> None:
+
+def save_board(filename: str, B: Board) -> None:
     '''saves board configuration into file in current directory in plain format'''
-    piece_codes = {King:'K',Bishop:'B',Rook:'R'}
-    B_current = read_board(filename)
-    size = str(Board[0])
+    piece_codes = {King: 'K', Bishop: 'B', Rook: 'R'}
+    size = str(B[0])
     white_pieces = []
     black_pieces = []
-    for piece in Board[1]:
+    for piece in B[1]:
         if piece.side_:
             x = piece.pos_X
             y = piece.pos_Y
             code = piece_codes[piece.__class__]
-            white_pieces.append(str(code)+index2location(x,y))
+            white_pieces.append(str(code) + index2location(x, y))
         else:
             x = piece.pos_X
             y = piece.pos_Y
             code = piece_codes[piece.__class__]
             black_pieces.append(str(code) + index2location(x, y))
-    with open(filename,"w") as fl:
+    white_pieces = ','.join(white_pieces)
+    black_pieces = ','.join(black_pieces)
+    with open(filename, "w") as fl:
         fl.write(size + "\n")
-        fl.write(white_pieces+"\n")
-        fl.write(black_pieces+"\n")
+        fl.write(white_pieces + "\n")
+        fl.write(black_pieces + "\n")
         fl.close()
+
 
 def find_black_move(B: Board) -> tuple[Piece, int, int]:
     '''
@@ -429,13 +434,13 @@ def find_black_move(B: Board) -> tuple[Piece, int, int]:
     '''
     board = []
     possible_moves = []
-    for i in range(1,B[0]+1):
-        for j in range(1,B[0]+1):
-            board.append((i,j))
+    for i in range(1, B[0] + 1):
+        for j in range(1, B[0] + 1):
+            board.append((i, j))
     for piece in B[1]:
         for j in board:
             temp_board = deepcopy(B)
-            if piece.side_ == False and piece.can_reach(j[0],j[1],B):
+            if piece.side_ == False and piece.can_reach(j[0], j[1], B):
                 if is_piece_at(j[0], j[1], B):
                     temp_board[1].remove(piece_at(j[0], j[1], B))
                     new_P = piece.__class__(j[0], j[1], piece.side_)
@@ -445,10 +450,10 @@ def find_black_move(B: Board) -> tuple[Piece, int, int]:
                     new_P = piece.__class__(j[0], j[1], piece.side_)
                     temp_board[1].remove(piece)
                     temp_board[1].append(new_P)
-                if not is_check(False, temp_board):
-                    possible_moves.append((piece, j[0],j[1]))
-        black_move = random.choice(possible_moves)
-        return black_move
+                if is_check(False, temp_board) == False:
+                    possible_moves.append((piece, j[0], j[1]))
+    black_move = random.choice(possible_moves)
+    return black_move
 
 
 def conf2unicode(B: Board) -> str:
@@ -470,10 +475,10 @@ def conf2unicode(B: Board) -> str:
                     unicode_board[i] = piece_codes_black[piece.__class__]
                     break
     for x in range(len(unicode_board)):
-        if isinstance(unicode_board[x],tuple):
+        if isinstance(unicode_board[x], tuple):
             unicode_board[x] = "\u2001"
         str.strip(unicode_board[x])
-    unicode_board = [unicode_board[x:x+B[0]] for x in range(0,len(unicode_board),B[0])]
+    unicode_board = [unicode_board[x:x + B[0]] for x in range(0, len(unicode_board), B[0])]
     unicode_board.reverse()
     for x in range(len(unicode_board)):
         unicode_board[x].append("\n")
@@ -492,9 +497,52 @@ def main() -> None:
     filename = input("File name for initial configuration: ")
     ...
     '''
-    #filename = input("File name for initial configuration: ")
-    #Board = read_board(filename)
-
+    while True:
+        try:
+            filename = input("File name for initial configuration: ")
+            B = read_board(filename)
+            break
+        except IOError:
+            if filename == "QUIT":
+                quit()
+            else:
+                print("This is not a valid file.")
+    print(conf2unicode(B))
+    while True:
+        try:
+            next_move = input("Next move of white:")
+            piece_selected = location2index(next_move[0:2])
+            new_location = location2index(next_move[-2:])
+            piece_selected = piece_at(piece_selected[0], piece_selected[1], B)
+            if piece_selected.can_move_to(new_location[0], new_location[1], B):
+                piece_selected.move_to(new_location[0], new_location[1], B)
+                print("The configuration after White's move is:")
+                print(conf2unicode(B))
+                if is_checkmate(False, B):
+                    print("Game over. White wins.")
+                    quit()
+                else:
+                    black_move = find_black_move(B)
+                    black_piece_selected = index2location(black_move[0].pos_X, black_move[0].pos_Y)
+                    black_new_location = black_piece_selected + index2location(black_move[1], black_move[2])
+                    black_move[0].move_to(black_move[1], black_move[2], B)
+                    print("Next move of Black is {}. The configuration after Black's move is:".format(black_new_location))
+                    print(conf2unicode(B))
+                    if is_checkmate(True, B):
+                        print("Game over. Black wins.")
+                        quit()
+                    else:
+                        pass
+            else:
+                raise ValueError
+        except ValueError:
+            if next_move == "QUIT":
+                save_location = input("File name to store the configuration:")
+                save_board(save_location, B)
+                print("The game configuration saved.")
+                quit()
+            else:
+                print("This is not a valid move.")
 
 
 
