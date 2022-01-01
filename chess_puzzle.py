@@ -84,6 +84,7 @@ def piece_at(pos_X: int, pos_Y: int, B: Board) -> Piece:
             pass
 
 
+
 class Rook(Piece):
     def __init__(self, pos_X: int, pos_Y: int, side_: bool):
         '''sets initial values by calling the constructor of Piece'''
@@ -140,16 +141,16 @@ class Rook(Piece):
         - thirdly, construct new board resulting from move
         - finally, to check [Rule5], use is_check on new board
         '''
-        new_B = copy(B)
+        new_B = deepcopy(B)
         if self.can_reach(pos_X, pos_Y, B):
             if is_piece_at(pos_X, pos_Y, B):
-                new_B[1].remove(piece_at(pos_X, pos_Y, B))
+                new_B[1].remove(piece_at(pos_X, pos_Y, new_B))
                 new_P = Rook(pos_X, pos_Y, self.side_)
-                new_B[1].remove(piece_at(self.pos_X, self.pos_Y, B))
+                new_B[1].remove(piece_at(self.pos_X, self.pos_Y, new_B))
                 new_B[1].append(new_P)
             else:
                 new_P = Rook(pos_X, pos_Y, self.side_)
-                new_B[1].remove(piece_at(self.pos_X, self.pos_Y, B))
+                new_B[1].remove(piece_at(self.pos_X, self.pos_Y, new_B))
                 new_B[1].append(new_P)
             if is_check(self.side_, new_B):
                 return False
@@ -212,16 +213,16 @@ class Bishop(Piece):
 
     def can_move_to(self, pos_X: int, pos_Y: int, B: Board) -> bool:
         '''checks if this bishop can move to coordinates pos_X, pos_Y on board B according to all chess rules'''
-        new_B = copy(B)
+        new_B = deepcopy(B)
         if self.can_reach(pos_X, pos_Y, B):
             if is_piece_at(pos_X, pos_Y, B):
-                new_B[1].remove(piece_at(pos_X, pos_Y, B))
+                new_B[1].remove(piece_at(pos_X, pos_Y, new_B))
                 new_P = Bishop(pos_X, pos_Y, self.side_)
-                new_B[1].remove(piece_at(self.pos_X, self.pos_Y, B))
+                new_B[1].remove(piece_at(self.pos_X, self.pos_Y, new_B))
                 new_B[1].append(new_P)
             else:
                 new_P = Bishop(pos_X, pos_Y, self.side_)
-                new_B[1].remove(piece_at(self.pos_X, self.pos_Y, B))
+                new_B[1].remove(piece_at(self.pos_X, self.pos_Y, new_B))
                 new_B[1].append(new_P)
             if is_check(self.side_, new_B):
                 return False
@@ -229,7 +230,6 @@ class Bishop(Piece):
                 return True
         else:
             return False
-
     def move_to(self, pos_X: int, pos_Y: int, B: Board) -> Board:
         '''
         returns new board resulting from move of this bishop to coordinates pos_X, pos_Y on board B
@@ -265,16 +265,16 @@ class King(Piece):
 
     def can_move_to(self, pos_X: int, pos_Y: int, B: Board) -> bool:
         '''checks if this king can move to coordinates pos_X, pos_Y on board B according to all chess rules'''
-        new_B = copy(B)
+        new_B = deepcopy(B)
         if self.can_reach(pos_X, pos_Y, B):
             if is_piece_at(pos_X, pos_Y, B):
-                new_B[1].remove(piece_at(pos_X, pos_Y, B))
+                new_B[1].remove(piece_at(pos_X, pos_Y, new_B))
                 new_P = King(pos_X, pos_Y, self.side_)
-                new_B[1].remove(piece_at(self.pos_X, self.pos_Y, B))
+                new_B[1].remove(piece_at(self.pos_X, self.pos_Y, new_B))
                 new_B[1].append(new_P)
             else:
                 new_P = King(pos_X, pos_Y, self.side_)
-                new_B[1].remove(piece_at(self.pos_X, self.pos_Y, B))
+                new_B[1].remove(piece_at(self.pos_X, self.pos_Y, new_B))
                 new_B[1].append(new_P)
             if is_check(self.side_, new_B):
                 return False
@@ -282,7 +282,6 @@ class King(Piece):
                 return True
         else:
             return False
-
     def move_to(self, pos_X: int, pos_Y: int, B: Board) -> Board:
         '''
         returns new board resulting from move of this king to coordinates pos_X, pos_Y on board B 
@@ -500,35 +499,36 @@ def main() -> None:
     while True:
         try:
             filename = input("File name for initial configuration: ")
-            B = read_board(filename)
+            b = read_board(filename)
             break
         except IOError:
             if filename == "QUIT":
                 quit()
             else:
                 print("This is not a valid file.")
-    print(conf2unicode(B))
+    print(conf2unicode(b))
     while True:
         try:
             next_move = input("Next move of white:")
-            piece_selected = location2index(next_move[0:2])
+            piece_selected_loc = location2index(next_move[:2])
             new_location = location2index(next_move[-2:])
-            piece_selected = piece_at(piece_selected[0], piece_selected[1], B)
-            if piece_selected.can_move_to(new_location[0], new_location[1], B):
-                piece_selected.move_to(new_location[0], new_location[1], B)
+            piece_selected = piece_at(piece_selected_loc[0], piece_selected_loc[1], b)
+            if piece_selected.can_move_to(new_location[0], new_location[1], b):
+                piece_selected.move_to(new_location[0], new_location[1], b)
                 print("The configuration after White's move is:")
-                print(conf2unicode(B))
-                if is_checkmate(False, B):
+                print(conf2unicode(b))
+                if is_checkmate(False, b):
                     print("Game over. White wins.")
                     quit()
                 else:
-                    black_move = find_black_move(B)
+                    black_move = find_black_move(b)
                     black_piece_selected = index2location(black_move[0].pos_X, black_move[0].pos_Y)
                     black_new_location = black_piece_selected + index2location(black_move[1], black_move[2])
-                    black_move[0].move_to(black_move[1], black_move[2], B)
-                    print("Next move of Black is {}. The configuration after Black's move is:".format(black_new_location))
-                    print(conf2unicode(B))
-                    if is_checkmate(True, B):
+                    black_move[0].move_to(black_move[1], black_move[2], b)
+                    print(
+                        "Next move of Black is {}. The configuration after Black's move is:".format(black_new_location))
+                    print(conf2unicode(b))
+                    if is_checkmate(True, b):
                         print("Game over. Black wins.")
                         quit()
                     else:
@@ -538,12 +538,11 @@ def main() -> None:
         except ValueError:
             if next_move == "QUIT":
                 save_location = input("File name to store the configuration:")
-                save_board(save_location, B)
+                save_board(save_location, b)
                 print("The game configuration saved.")
                 quit()
             else:
                 print("This is not a valid move.")
-
 
 
 if __name__ == '__main__':  # keep this in
