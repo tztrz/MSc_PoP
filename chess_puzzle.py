@@ -2,8 +2,6 @@ from copy import deepcopy
 import random
 
 
-# TODO: add comments to explain functionality
-
 def location2index(loc: str) -> tuple[int, ...]:
     '''converts chess location to corresponding x and y coordinates'''
     location = []

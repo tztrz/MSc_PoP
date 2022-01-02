@@ -392,6 +392,7 @@ def test_is_checkmate5():
     B2 = (5, [wb1, wr1, wb2, bk, br1, br2, br3, wr2, wk])
     assert is_checkmate(True, B2) == False
 
+
 # piece taken in move (br1)
 def test_move_to1():
     wb1 = Bishop(1, 1, True)
@@ -418,21 +419,27 @@ b2_br2 = Rook(6, 1, False)
 b2_bb = Bishop(5, 4, False)
 
 B2_board = (6, [b2_wk, b2_wb, b2_wr, b2_wb2, b2_bk, b2_br, b2_br2, b2_bb])
+
+
 def test_move_to2():
-    b2_br.move_to(6,6,B2_board)
+    b2_br.move_to(6, 6, B2_board)
     assert b2_br2.pos_X == 6
 
+
 def test_move_to3():
-    b2_wk.move_to(2,5,B2_board)
+    b2_wk.move_to(2, 5, B2_board)
     assert b2_wk.pos_X == 2 and b2_wk.pos_Y == 5
+
 
 def test_move_to4():
     b2_bb.move_to(5, 2, B2_board)
     assert b2_bb.pos_X == 5 and b2_bb.pos_Y == 2
 
+
 def test_move_to5():
-    b2_wb2.move_to(4,4,B2_board)
+    b2_wb2.move_to(4, 4, B2_board)
     assert b2_wb2.pos_Y == 4
+
 
 b3_wk = King(1, 6, True)
 b3_wb = Bishop(5, 2, True)
@@ -444,6 +451,7 @@ b3_br2 = Rook(6, 1, False)
 b3_bb = Bishop(5, 4, False)
 
 B3_board = (6, [b3_wk, b3_wb, b3_wr, b3_wb2, b3_bk, b3_br, b3_br2, b3_bb])
+
 
 def test_read_board1():
     B = read_board("board_examp.txt")
@@ -465,6 +473,7 @@ def test_read_board1():
                 found = True
         assert found
 
+
 def test_read_board2():
     B = read_board("board_examp3")
     assert B[0] == 6
@@ -485,13 +494,15 @@ def test_read_board2():
                 found = True
         assert found
 
-b4_wk = King(1,1,True)
-b4_wb = Bishop(2,3,True)
-b4_wr = Rook(3,2,True)
-b4_bk = King(2,2,False)
-b4_br = Rook(3,3,False)
 
-b4 = (3, [b4_wk,b4_wb,b4_wr,b4_bk,b4_br])
+b4_wk = King(1, 1, True)
+b4_wb = Bishop(2, 3, True)
+b4_wr = Rook(3, 2, True)
+b4_bk = King(2, 2, False)
+b4_br = Rook(3, 3, False)
+
+b4 = (3, [b4_wk, b4_wb, b4_wr, b4_bk, b4_br])
+
 
 def test_read_board3():
     B = read_board("board_examp4")
@@ -513,11 +524,12 @@ def test_read_board3():
                 found = True
         assert found
 
-b5_wk = King(1,1,True)
-b5_wb = Bishop(1,2,True)
-b5_bk = King(2,1,False)
 
-b5 = (2,[b5_wk,b5_wb,b5_bk])
+b5_wk = King(1, 1, True)
+b5_wb = Bishop(1, 2, True)
+b5_bk = King(2, 1, False)
+
+b5 = (2, [b5_wk, b5_wb, b5_bk])
 
 
 def test_read_board4():
@@ -540,27 +552,34 @@ def test_read_board4():
                 found = True
         assert found
 
+
 def test_read_board5():
     with pytest.raises(IOError) as er:
         assert read_board("board_examp6") == er
 
+
 def test_conf2unicode1():
     assert conf2unicode(B1) == "♖ ♔  \n ♜  ♜\n ♚ ♜ \n♖   ♗\n♗    "
+
 
 def test_conf2unicode2():
     assert conf2unicode(B3_board) == "♔  ♜ ♗\n♖     \n    ♝ \n ♚    \n    ♗ \n     ♜"
 
+
 def test_conf2unicode3():
     assert conf2unicode(b4) == " ♗♜\n ♚♖\n♔  "
+
 
 def test_conf2unicode4():
     assert conf2unicode(b5) == "♗ \n♔♚"
 
-b6_wk = King(1,2,True)
-b6_wb = Rook(3,2,True)
-b6_bk = King(3,3,True)
 
-b6 = (7,[b6_bk,b6_wk,b6_wb])
+b6_wk = King(1, 2, True)
+b6_wb = Rook(3, 2, True)
+b6_bk = King(3, 3, True)
+
+b6 = (7, [b6_bk, b6_wk, b6_wb])
+
 
 def test_conf2unicode5():
-    assert conf2unicode(b6)== "       \n       \n       \n       \n  ♔    \n♔ ♖    \n       "
+    assert conf2unicode(b6) == "       \n       \n       \n       \n  ♔    \n♔ ♖    \n       "
