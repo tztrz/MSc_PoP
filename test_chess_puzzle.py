@@ -493,7 +493,7 @@ b4_br = Rook(3,3,False)
 
 b4 = (3, [b4_wk,b4_wb,b4_wr,b4_bk,b4_br])
 
-def test_read_board4():
+def test_read_board3():
     B = read_board("board_examp4")
     assert B[0] == 3
 
@@ -513,6 +513,37 @@ def test_read_board4():
                 found = True
         assert found
 
+b5_wk = King(1,1,True)
+b5_wb = Bishop(1,2,True)
+b5_bk = King(2,1,False)
+
+b5 = (2,[b5_wk,b5_wb,b5_bk])
+
+
+def test_read_board4():
+    B = read_board("board_examp5")
+    assert B[0] == 2
+
+    for piece in B[1]:
+        found = False
+        for piece1 in b5[1]:
+            if piece.pos_X == piece1.pos_X and piece.pos_Y == piece1.pos_Y and piece.side_ == piece1.side_ and type(
+                    piece) == type(piece1):
+                found = True
+        assert found
+
+    for piece1 in b5[1]:
+        found = False
+        for piece in B[1]:
+            if piece.pos_X == piece1.pos_X and piece.pos_Y == piece1.pos_Y and piece.side_ == piece1.side_ and type(
+                    piece) == type(piece1):
+                found = True
+        assert found
+
+def test_read_board5():
+    with pytest.raises(IOError) as er:
+        assert read_board("board_examp6") == er
+
 def test_conf2unicode1():
     assert conf2unicode(B1) == "♖ ♔  \n ♜  ♜\n ♚ ♜ \n♖   ♗\n♗    "
 
@@ -521,3 +552,15 @@ def test_conf2unicode2():
 
 def test_conf2unicode3():
     assert conf2unicode(b4) == " ♗♜\n ♚♖\n♔  "
+
+def test_conf2unicode4():
+    assert conf2unicode(b5) == "♗ \n♔♚"
+
+b6_wk = King(1,2,True)
+b6_wb = Rook(3,2,True)
+b6_bk = King(3,3,True)
+
+b6 = (7,[b6_bk,b6_wk,b6_wb])
+
+def test_conf2unicode5():
+    assert conf2unicode(b6)== "       \n       \n       \n       \n  ♔    \n♔ ♖    \n       "

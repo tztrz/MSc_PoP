@@ -383,20 +383,22 @@ def read_board(filename: str) -> Board:
     black_pieces_final = []
     with open(filename, "r") as fl:
         lines = fl.readlines()
+        if len(lines) > 3 or len(lines) < 3:
+            raise IOError
+        else:
+            white_pieces = lines[1].rstrip().split(",")
+            white_pieces = [s.strip() for s in white_pieces]
+            white_pieces_locations = [location2index(piece[1:]) for piece in white_pieces]
+            for i in zip(white_pieces, white_pieces_locations):
+                white_pieces_final.append(create_piece(i[0][0], i[1][0], i[1][1], True))
 
-        white_pieces = lines[1].rstrip().split(",")
-        white_pieces = [s.strip() for s in white_pieces]
-        white_pieces_locations = [location2index(piece[1:]) for piece in white_pieces]
-        for i in zip(white_pieces, white_pieces_locations):
-            white_pieces_final.append(create_piece(i[0][0], i[1][0], i[1][1], True))
+            black_pieces = lines[2].rstrip().split(",")
+            black_pieces = [s.strip() for s in black_pieces]
+            black_pieces_locations = [location2index(piece[1:]) for piece in black_pieces]
+            for i in zip(black_pieces, black_pieces_locations):
+                black_pieces_final.append(create_piece(i[0][0], i[1][0], i[1][1], False))
 
-        black_pieces = lines[2].rstrip().split(",")
-        black_pieces = [s.strip() for s in black_pieces]
-        black_pieces_locations = [location2index(piece[1:]) for piece in black_pieces]
-        for i in zip(black_pieces, black_pieces_locations):
-            black_pieces_final.append(create_piece(i[0][0], i[1][0], i[1][1], False))
-
-        fl.close()
+            fl.close()
     pieces = white_pieces_final + black_pieces_final
     pieces_locations = white_pieces_locations + black_pieces_locations
 
