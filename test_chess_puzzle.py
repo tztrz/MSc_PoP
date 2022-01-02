@@ -221,11 +221,12 @@ br2a = Rook(1, 5, False)
 wr2a = Rook(2, 5, True)
 bb1 = Bishop(2, 1, False)
 
+
 def test_can_reach19b():
-    wr1 = Rook(2,2,True)
-    wb1 = Bishop(1,1,True)
+    wr1 = Rook(2, 2, True)
+    wb1 = Bishop(1, 1, True)
     B1 = (5, [wb1, wr1, wb2, bk, br1, br2, br3, wr2, wk])
-    assert wb1.can_reach(5,5,B1) == False
+    assert wb1.can_reach(5, 5, B1) == False
 
 
 def test_can_move_to1():
@@ -258,6 +259,7 @@ def test_can_move_to5():
     br2a = Rook(3, 1, False)
     B2 = (5, [wb1, wr1, wb2, bk, br1, br2a, br3, wr2a, wr2, wk])
     assert wr2.can_move_to(2, 3, B2) == False
+
 
 # can move without causing check
 def test_can_move_to6():
@@ -330,6 +332,7 @@ def test_is_checkmate1():
     assert is_checkmate(True, B2) == True
 
 
+# piece in the way of possible move out of check
 def test_is_checkmate2():
     wb1 = Bishop(1, 1, True)
     wr1 = Rook(2, 2, True)
@@ -342,7 +345,7 @@ def test_is_checkmate2():
     wk = King(3, 5, True)
 
     B1 = (5, [wb1, wr1, wb2, bk, br1, br2, br3, wr2, wk])
-    assert is_checkmate(True,B1) == True
+    assert is_checkmate(True, B1) == True
 
 
 wr2c = Rook(1, 5, True)
@@ -375,7 +378,21 @@ def test_is_checkmate4():
     assert is_checkmate(True, B1) == False
 
 
-# TODO: add tests to move to
+# available move by other piece to remove check
+def test_is_checkmate5():
+    wb1 = Bishop(1, 1, True)
+    wr1 = Rook(1, 2, True)
+    wb2 = Bishop(5, 2, True)
+    bk = King(2, 3, False)
+    br1 = Rook(4, 3, False)
+    br2 = Rook(5, 5, False)
+    br3 = Rook(5, 4, False)
+    wr2 = Rook(1, 5, True)
+    wk = King(3, 5, True)
+    B2 = (5, [wb1, wr1, wb2, bk, br1, br2, br3, wr2, wk])
+    assert is_checkmate(True, B2) == False
+
+# piece taken in move (br1)
 def test_move_to1():
     wb1 = Bishop(1, 1, True)
     wr1 = Rook(1, 2, True)
@@ -391,7 +408,43 @@ def test_move_to1():
     assert wb2.move_to(4, 3, B1) == (5, [wb1, wr1, wb2, bk, br2, br3, wr2, wk])
 
 
-# TODO: add more tests to read_board
+b2_wk = King(1, 6, True)
+b2_wb = Bishop(5, 2, True)
+b2_wr = Rook(1, 5, True)
+b2_wb2 = Bishop(6, 6, True)
+b2_bk = King(2, 3, False)
+b2_br = Rook(4, 6, False)
+b2_br2 = Rook(6, 1, False)
+b2_bb = Bishop(5, 4, False)
+
+B2_board = (6, [b2_wk, b2_wb, b2_wr, b2_wb2, b2_bk, b2_br, b2_br2, b2_bb])
+def test_move_to2():
+    b2_br.move_to(6,6,B2_board)
+    assert b2_br2.pos_X == 6
+
+def test_move_to3():
+    b2_wk.move_to(2,5,B2_board)
+    assert b2_wk.pos_X == 2 and b2_wk.pos_Y == 5
+
+def test_move_to4():
+    b2_bb.move_to(5, 2, B2_board)
+    assert b2_bb.pos_X == 5 and b2_bb.pos_Y == 2
+
+def test_move_to5():
+    b2_wb2.move_to(4,4,B2_board)
+    assert b2_wb2.pos_Y == 4
+
+b3_wk = King(1, 6, True)
+b3_wb = Bishop(5, 2, True)
+b3_wr = Rook(1, 5, True)
+b3_wb2 = Bishop(6, 6, True)
+b3_bk = King(2, 3, False)
+b3_br = Rook(4, 6, False)
+b3_br2 = Rook(6, 1, False)
+b3_bb = Bishop(5, 4, False)
+
+B3_board = (6, [b3_wk, b3_wb, b3_wr, b3_wb2, b3_bk, b3_br, b3_br2, b3_bb])
+
 def test_read_board1():
     B = read_board("board_examp.txt")
     assert B[0] == 5
@@ -412,6 +465,59 @@ def test_read_board1():
                 found = True
         assert found
 
+def test_read_board2():
+    B = read_board("board_examp3")
+    assert B[0] == 6
+
+    for piece in B[1]:
+        found = False
+        for piece1 in B3_board[1]:
+            if piece.pos_X == piece1.pos_X and piece.pos_Y == piece1.pos_Y and piece.side_ == piece1.side_ and type(
+                    piece) == type(piece1):
+                found = True
+        assert found
+
+    for piece1 in B3_board[1]:
+        found = False
+        for piece in B[1]:
+            if piece.pos_X == piece1.pos_X and piece.pos_Y == piece1.pos_Y and piece.side_ == piece1.side_ and type(
+                    piece) == type(piece1):
+                found = True
+        assert found
+
+b4_wk = King(1,1,True)
+b4_wb = Bishop(2,3,True)
+b4_wr = Rook(3,2,True)
+b4_bk = King(2,2,False)
+b4_br = Rook(3,3,False)
+
+b4 = (3, [b4_wk,b4_wb,b4_wr,b4_bk,b4_br])
+
+def test_read_board4():
+    B = read_board("board_examp4")
+    assert B[0] == 3
+
+    for piece in B[1]:
+        found = False
+        for piece1 in b4[1]:
+            if piece.pos_X == piece1.pos_X and piece.pos_Y == piece1.pos_Y and piece.side_ == piece1.side_ and type(
+                    piece) == type(piece1):
+                found = True
+        assert found
+
+    for piece1 in b4[1]:
+        found = False
+        for piece in B[1]:
+            if piece.pos_X == piece1.pos_X and piece.pos_Y == piece1.pos_Y and piece.side_ == piece1.side_ and type(
+                    piece) == type(piece1):
+                found = True
+        assert found
 
 def test_conf2unicode1():
     assert conf2unicode(B1) == "♖ ♔  \n ♜  ♜\n ♚ ♜ \n♖   ♗\n♗    "
+
+def test_conf2unicode2():
+    assert conf2unicode(B3_board) == "♔  ♜ ♗\n♖     \n    ♝ \n ♚    \n    ♗ \n     ♜"
+
+def test_conf2unicode3():
+    assert conf2unicode(b4) == " ♗♜\n ♚♖\n♔  "

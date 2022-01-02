@@ -201,29 +201,28 @@ class Bishop(Piece):
                 or (pos_X > B[0]) or (pos_Y > B[0]):
             return False
         else:
-            path_clear = 1
+            path_clear = True
             if direction == 3:
                 for i in range(1, abs(x)):
                     if is_piece_at(self.pos_X + i, self.pos_Y + i, B):
-                        path_clear = 0
+                        path_clear = False
                         break
             elif direction == 1:
                 for i in range(1, abs(x)):
                     if is_piece_at(self.pos_X - i, self.pos_Y - i, B):
-                        path_clear = 0
+                        path_clear = False
                         break
             elif direction == 4:
                 for i in range(1, abs(x)):
                     if is_piece_at(self.pos_X + i, self.pos_Y - i, B):
-                        path_clear = 0
+                        path_clear = False
                         break
             elif direction == 2:
                 for i in range(1, abs(x)):
                     if is_piece_at(self.pos_X - i, self.pos_Y + i, B):
-                        path_clear = 0
+                        path_clear = False
                         break
-
-        if path_clear == 1 and abs(x) == abs(y):
+        if path_clear and abs(x) == abs(y):
             return True
         else:
             return False
