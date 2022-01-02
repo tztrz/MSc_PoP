@@ -1,8 +1,8 @@
+import pytest
+
 from chess_puzzle import *
 
-# TODO: add short comment to explain tests purpose
 
-# TODO: add tests for location2index and index2location
 def test_location2index1():
     assert location2index("e2") == (5, 2)
 
@@ -15,6 +15,17 @@ def test_location2index3():
     assert location2index("z26") == (26, 26)
 
 
+# testing that uppercase letters are converted to lower
+def test_location2index4():
+    assert location2index("Z24") == (26, 24)
+
+
+# exception raised
+def test_location2index5():
+    with pytest.raises(Exception) as exception:
+        assert location2index("z27") == exception
+
+
 def test_index2location1():
     assert index2location(5, 2) == "e2"
 
@@ -25,6 +36,14 @@ def test_index2location2():
 
 def test_index2location3():
     assert index2location(15, 7) == "o7"
+
+
+def test_index2location4():
+    assert index2location(26, 26) == "z26"
+
+
+def test_index2location5():
+    assert index2location(17, 24) == "q24"
 
 
 wb1 = Bishop(1, 1, True)
@@ -59,6 +78,15 @@ def test_is_piece_at3():
     assert is_piece_at(5, 3, B1) == False
 
 
+# out of board size
+def test_is_piece_at4():
+    assert is_piece_at(6, 5, B1) == False
+
+
+def test_is_piece_at5():
+    assert is_piece_at(0, 5, B1) == False
+
+
 def test_piece_at1():
     assert piece_at(4, 3, B1) == br1
 
@@ -75,6 +103,11 @@ def test_piece_at4():
     assert piece_at(3, 5, B1) == wk
 
 
+def test_piece_at5():
+    assert piece_at(0, 5, B1) == None
+
+
+# testing for rook
 def test_can_reach1():
     assert wr2.can_reach(4, 5, B1) == False
 
@@ -103,6 +136,8 @@ def test_can_reach7():
     assert wr1.can_reach(3, 2, B1) == True
 
 
+# testing for bishop
+# forwards and up
 def test_can_reach8():
     assert wb1.can_reach(4, 4, B1) == True
 
@@ -111,46 +146,86 @@ def test_can_reach9():
     assert wb2.can_reach(4, 3, B1) == True
 
 
+# forwards and down
 def test_can_reach10():
-    assert wb2.can_reach(3, 4, B1) == False
+    wb2 = Bishop(3, 3, True)
+    assert wb2.can_reach(5, 1, B1) == True
 
 
+# backwards and up
 def test_can_reach11():
+    bb = Bishop(5, 1, False)
+    B1 = (5, [wb1, wr1, bb, bk, br1, br2, br3, wr2, wk])
+    assert bb.can_reach(4, 2, B1) == True
+
+
+# backwards and down
+def test_can_reach12():
+    bb = Bishop(5, 3, False)
+    B1 = (5, [wb1, wr1, bb, bk, br1, br2, br3, wr2, wk])
+    assert bb.can_reach(3, 1, B1) == True
+
+
+# testing king in all directions
+# down
+def test_can_reach13():
     assert wk.can_reach(3, 4, B1) == True
 
 
-def test_can_reach12():
+# down left
+def test_can_reach14():
     assert wk.can_reach(2, 4, B1) == True
 
 
-def test_can_reach13():
+# down right
+def test_can_reach14a():
+    assert wk.can_reach(4, 4, B1) == True
+
+
+# up (piece of same side in way)
+def test_can_reach15():
     assert bk.can_reach(2, 4, B1) == False
 
 
-def test_can_reach14():
-    wr2b = Rook(2, 5, True)
-    B2 = (5, [wb1, wr1, wb2, bk, br1, br2, br3, wr2b, wk])
-    assert wr2b.can_reach(2, 3, B2) == False
+# up
+def test_can_reach16():
+    bk = King(3, 3, False)
+    assert bk.can_reach(3, 4, B1) == True
 
-# TODO: tidying copied B1
-def test_can_reach15():
-    wb1 = Bishop(1, 1, True)
-    wr1 = Rook(1, 2, True)
-    wb2 = Bishop(5, 2, True)
-    bk = King(2, 3, False)
-    br1 = Rook(4, 3, False)
-    br2 = Rook(2, 4, False)
-    br3 = Rook(5, 4, False)
-    wr2 = Rook(1, 5, True)
+
+# up and right
+def test_can_reach17():
+    bk = King(3, 3, False)
+    assert bk.can_reach(4, 4, B1) == True
+
+
+# up and left
+def test_can_reach18():
+    bk = King(4, 3, False)
+    br1 = Rook(5, 3, False)
+    assert bk.can_reach(3, 4, B1) == True
+
+
+# left
+def test_can_reach19():
     wk = King(3, 5, True)
+    assert wk.can_reach(4, 5, B1) == True
 
-    B1 = (5, [wb1, wr1, wb2, bk, br1, br2, br3, wr2, wk])
-    assert wr2.can_reach(1, 4, B1) == True
+
+# right
+def test_can_reach19a():
+    assert wk.can_reach(2, 5, B1) == True
 
 
 br2a = Rook(1, 5, False)
 wr2a = Rook(2, 5, True)
 bb1 = Bishop(2, 1, False)
+
+def test_can_reach19b():
+    wr1 = Rook(2,2,True)
+    wb1 = Bishop(1,1,True)
+    B1 = (5, [wb1, wr1, wb2, bk, br1, br2, br3, wr2, wk])
+    assert wb1.can_reach(5,5,B1) == False
 
 
 def test_can_move_to1():
@@ -158,29 +233,33 @@ def test_can_move_to1():
     assert wr2a.can_move_to(2, 4, B2) == False
 
 
+# piece of same side in path
 def test_can_move_to2():
     B2 = (5, [wb1, wr1, wb2, bk, br1, br2a, br3, wr2a, wk])
     assert br2a.can_move_to(2, 4, B2) == False
 
 
+# incorrect movement
 def test_can_move_to3():
     B2 = (5, [wb1, wr1, wb2, bk, br1, br2a, br3, bb1, wk])
     assert bb1.can_move_to(2, 4, B2) == False
 
 
+# put self in check
 def test_can_move_to4():
     wr1 = Rook(1, 2, True)
     B2 = (5, [wb1, wr1, wb2, bk, br1, br2a, br3, wr2a, wk])
     assert bk.can_move_to(2, 2, B2) == False
 
 
+# puts king in check
 def test_can_move_to5():
     wr2 = Rook(3, 3, True)
     br2a = Rook(3, 1, False)
     B2 = (5, [wb1, wr1, wb2, bk, br1, br2a, br3, wr2a, wr2, wk])
     assert wr2.can_move_to(2, 3, B2) == False
 
-
+# can move without causing check
 def test_can_move_to6():
     B2 = (5, [wb1, wr1, wb2, bk, br1, br2a, br3, wr2a, wk])
     assert wb1.can_move_to(2, 2, B2) == True
@@ -252,10 +331,18 @@ def test_is_checkmate1():
 
 
 def test_is_checkmate2():
-    br2b = Rook(2, 2, False)
-    br1a = Rook(5, 5, False)
-    B2 = (5, [wb1, wr1, wb2, bk, br1a, br2b, br3, wr2, wk])
-    assert is_checkmate(True, B2) == True
+    wb1 = Bishop(1, 1, True)
+    wr1 = Rook(2, 2, True)
+    wb2 = Bishop(5, 2, True)
+    bk = King(2, 3, False)
+    br1 = Rook(4, 3, False)
+    br2 = Rook(5, 5, False)
+    br3 = Rook(5, 4, False)
+    wr2 = Rook(1, 5, True)
+    wk = King(3, 5, True)
+
+    B1 = (5, [wb1, wr1, wb2, bk, br1, br2, br3, wr2, wk])
+    assert is_checkmate(True,B1) == True
 
 
 wr2c = Rook(1, 5, True)
@@ -287,6 +374,7 @@ def test_is_checkmate4():
     B1 = (5, [wb1, wr1, wb2, bk, br1, br2, br3, wr2, wk])
     assert is_checkmate(True, B1) == False
 
+
 # TODO: add tests to move to
 def test_move_to1():
     wb1 = Bishop(1, 1, True)
@@ -301,6 +389,7 @@ def test_move_to1():
 
     B1 = (5, [wb1, wr1, wb2, bk, br1, br2, br3, wr2, wk])
     assert wb2.move_to(4, 3, B1) == (5, [wb1, wr1, wb2, bk, br2, br3, wr2, wk])
+
 
 # TODO: add more tests to read_board
 def test_read_board1():

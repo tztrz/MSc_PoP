@@ -1,9 +1,8 @@
-from copy import deepcopy, copy
+from copy import deepcopy
 import random
 
 
 # TODO: add comments to explain functionality
-# TODO: tidy repetitive statements if possible
 
 def location2index(loc: str) -> tuple[int, ...]:
     '''converts chess location to corresponding x and y coordinates'''
@@ -11,6 +10,7 @@ def location2index(loc: str) -> tuple[int, ...]:
     newloc = []
     for x in loc:
         if not x.isnumeric():
+            x = x.lower()
             x = ord(x) - 96
             int(x)
             location.append(x)
@@ -19,6 +19,9 @@ def location2index(loc: str) -> tuple[int, ...]:
             newloc.append(x)
     newloc = int(str("".join(newloc)))
     location.append(newloc)
+    for i in location:
+        if i > 26:
+            raise Exception('Position should not be greater than 26')
     return tuple(location)
 
 
@@ -82,7 +85,6 @@ def piece_at(pos_X: int, pos_Y: int, B: Board) -> Piece:
             return i
         else:
             pass
-
 
 
 class Rook(Piece):
@@ -184,32 +186,47 @@ class Bishop(Piece):
 
     def can_reach(self, pos_X: int, pos_Y: int, B: Board) -> bool:
         '''checks if this bishop can move to coordinates pos_X, pos_Y on board B according to rule [Rule1] and [Rule4]'''
-        x = abs(self.pos_X - pos_X)
-        y = abs(self.pos_Y - pos_Y)
+        x = self.pos_X - pos_X
+        y = self.pos_Y - pos_Y
+        if x > 0 and y > 0:
+            direction = 1  # "back and down"
+        elif x > 0 and y < 0:
+            direction = 2  # "back and up"
+        elif x < 0 and y < 0:
+            direction = 3  # "forward and up"
+        else:
+            direction = 4  # "forward and down"
+
         if is_piece_at(pos_X, pos_Y, B) == True and piece_at(pos_X, pos_Y, B).side_ == self.side_ \
                 or (pos_X > B[0]) or (pos_Y > B[0]):
             return False
         else:
-            path_clear = True
-            for i in range(1, x):
-                if is_piece_at(self.pos_X + i, self.pos_Y + i, B):
-                    path_clear = False
-                    break
-                elif is_piece_at(self.pos_X - i, self.pos_Y - i, B):
-                    path_clear = False
-                    break
-                elif is_piece_at(self.pos_X + i, self.pos_Y - i, B):
-                    path_clear = False
-                    break
-                elif is_piece_at(self.pos_X - i, self.pos_Y + i, B):
-                    path_clear = False
-                    break
-                else:
-                    pass
-            if path_clear and x == y:
-                return True
-            else:
-                return False
+            path_clear = 1
+            if direction == 3:
+                for i in range(1, abs(x)):
+                    if is_piece_at(self.pos_X + i, self.pos_Y + i, B):
+                        path_clear = 0
+                        break
+            elif direction == 1:
+                for i in range(1, abs(x)):
+                    if is_piece_at(self.pos_X - i, self.pos_Y - i, B):
+                        path_clear = 0
+                        break
+            elif direction == 4:
+                for i in range(1, abs(x)):
+                    if is_piece_at(self.pos_X + i, self.pos_Y - i, B):
+                        path_clear = 0
+                        break
+            elif direction == 2:
+                for i in range(1, abs(x)):
+                    if is_piece_at(self.pos_X - i, self.pos_Y + i, B):
+                        path_clear = 0
+                        break
+
+        if path_clear == 1 and abs(x) == abs(y):
+            return True
+        else:
+            return False
 
     def can_move_to(self, pos_X: int, pos_Y: int, B: Board) -> bool:
         '''checks if this bishop can move to coordinates pos_X, pos_Y on board B according to all chess rules'''
@@ -230,6 +247,7 @@ class Bishop(Piece):
                 return True
         else:
             return False
+
     def move_to(self, pos_X: int, pos_Y: int, B: Board) -> Board:
         '''
         returns new board resulting from move of this bishop to coordinates pos_X, pos_Y on board B
@@ -257,8 +275,7 @@ class King(Piece):
         '''checks if this king can move to coordinates pos_X, pos_Y on board B according to rule [Rule3] and [Rule4]'''
         if is_piece_at(pos_X, pos_Y, B) == True and piece_at(pos_X, pos_Y, B).side_ == self.side_:
             return False
-        if abs(self.pos_X - pos_X) < 2 and abs(self.pos_Y - pos_Y) < 2 and \
-                (pos_X, pos_Y != self.pos_X, self.pos_Y) and (pos_X < B[0]) and (pos_Y < B[0]):
+        if abs(self.pos_X - pos_X) < 2 and abs(self.pos_Y - pos_Y) < 2 and (pos_X <= B[0]) and (pos_Y <= B[0]):
             return True
         else:
             return False
@@ -282,6 +299,7 @@ class King(Piece):
                 return True
         else:
             return False
+
     def move_to(self, pos_X: int, pos_Y: int, B: Board) -> Board:
         '''
         returns new board resulting from move of this king to coordinates pos_X, pos_Y on board B 
